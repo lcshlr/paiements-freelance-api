@@ -3,9 +3,9 @@ package com.payhint.api.domain.billing.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.payhint.api.domain.billing.valueobjects.InstallmentId;
-import com.payhint.api.domain.billing.valueobjects.Money;
-import com.payhint.api.domain.billing.valueobjects.PaymentId;
+import com.payhint.api.domain.billing.valueobject.InstallmentId;
+import com.payhint.api.domain.billing.valueobject.Money;
+import com.payhint.api.domain.billing.valueobject.PaymentId;
 
 import lombok.Getter;
 import lombok.NonNull;

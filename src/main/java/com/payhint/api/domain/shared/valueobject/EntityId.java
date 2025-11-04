@@ -1,8 +1,8 @@
-package com.payhint.api.domain.shared.valueobjects;
+package com.payhint.api.domain.shared.valueobject;
 
 import java.util.UUID;
 
-import com.payhint.api.domain.shared.exceptions.InvalidPropertyException;
+import com.payhint.api.domain.shared.exception.InvalidPropertyException;
 
 public interface EntityId {
     UUID value();

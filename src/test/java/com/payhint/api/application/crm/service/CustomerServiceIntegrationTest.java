@@ -18,16 +18,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.payhint.api.application.crm.dto.request.CreateCustomerRequest;
 import com.payhint.api.application.crm.dto.request.UpdateCustomerRequest;
 import com.payhint.api.application.crm.dto.response.CustomerResponse;
-import com.payhint.api.application.shared.exceptions.AlreadyExistsException;
-import com.payhint.api.application.shared.exceptions.NotFoundException;
-import com.payhint.api.application.shared.exceptions.PermissionDeniedException;
+import com.payhint.api.application.shared.exception.AlreadyExistsException;
+import com.payhint.api.application.shared.exception.NotFoundException;
+import com.payhint.api.application.shared.exception.PermissionDeniedException;
 import com.payhint.api.domain.crm.model.Customer;
 import com.payhint.api.domain.crm.model.User;
 import com.payhint.api.domain.crm.repository.CustomerRepository;
 import com.payhint.api.domain.crm.repository.UserRepository;
-import com.payhint.api.domain.crm.valueobjects.CustomerId;
-import com.payhint.api.domain.crm.valueobjects.Email;
-import com.payhint.api.domain.crm.valueobjects.UserId;
+import com.payhint.api.domain.crm.valueobject.CustomerId;
+import com.payhint.api.domain.crm.valueobject.Email;
+import com.payhint.api.domain.crm.valueobject.UserId;
 
 @SpringBootTest
 @TestPropertySource(properties = { "spring.datasource.url=jdbc:h2:mem:testdb",

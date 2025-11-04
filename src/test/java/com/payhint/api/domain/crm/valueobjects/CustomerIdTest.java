@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 
+import com.payhint.api.domain.crm.valueobject.CustomerId;
 import com.payhint.api.domain.shared.valueobjects.EntityIdTest;
 
 @DisplayName("CustomerId Value Object Tests")

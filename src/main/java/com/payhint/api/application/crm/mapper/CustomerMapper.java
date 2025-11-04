@@ -9,7 +9,7 @@ import com.payhint.api.application.crm.dto.request.CreateCustomerRequest;
 import com.payhint.api.application.crm.dto.response.CustomerResponse;
 import com.payhint.api.application.shared.ValueObjectMapper;
 import com.payhint.api.domain.crm.model.Customer;
-import com.payhint.api.domain.crm.valueobjects.UserId;
+import com.payhint.api.domain.crm.valueobject.UserId;
 
 @Mapper(componentModel = "spring", uses = { ValueObjectMapper.class })
 public interface CustomerMapper {

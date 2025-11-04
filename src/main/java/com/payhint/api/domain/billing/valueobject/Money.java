@@ -1,8 +1,8 @@
-package com.payhint.api.domain.billing.valueobjects;
+package com.payhint.api.domain.billing.valueobject;
 
 import java.math.BigDecimal;
 
-import com.payhint.api.domain.billing.exceptions.InvalidMoneyValueException;
+import com.payhint.api.domain.billing.exception.InvalidMoneyValueException;
 
 public record Money(BigDecimal amount) {
 

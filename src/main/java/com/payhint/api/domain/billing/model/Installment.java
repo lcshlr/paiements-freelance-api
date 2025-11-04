@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.payhint.api.domain.billing.valueobjects.InstallmentId;
-import com.payhint.api.domain.billing.valueobjects.InvoiceId;
-import com.payhint.api.domain.billing.valueobjects.Money;
+import com.payhint.api.domain.billing.valueobject.InstallmentId;
+import com.payhint.api.domain.billing.valueobject.InvoiceId;
+import com.payhint.api.domain.billing.valueobject.Money;
 
 import lombok.Getter;
 import lombok.NonNull;

@@ -1,12 +1,12 @@
-package com.payhint.api.application.crm.usecases;
+package com.payhint.api.application.crm.usecase;
 
 import java.util.List;
 
 import com.payhint.api.application.crm.dto.request.CreateCustomerRequest;
 import com.payhint.api.application.crm.dto.request.UpdateCustomerRequest;
 import com.payhint.api.application.crm.dto.response.CustomerResponse;
-import com.payhint.api.domain.crm.valueobjects.CustomerId;
-import com.payhint.api.domain.crm.valueobjects.UserId;
+import com.payhint.api.domain.crm.valueobject.CustomerId;
+import com.payhint.api.domain.crm.valueobject.UserId;
 
 import jakarta.validation.Valid;
 

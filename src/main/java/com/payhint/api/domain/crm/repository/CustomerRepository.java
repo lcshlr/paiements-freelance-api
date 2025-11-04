@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import com.payhint.api.domain.crm.model.Customer;
-import com.payhint.api.domain.crm.valueobjects.CustomerId;
-import com.payhint.api.domain.crm.valueobjects.UserId;
+import com.payhint.api.domain.crm.valueobject.CustomerId;
+import com.payhint.api.domain.crm.valueobject.UserId;
 
 public interface CustomerRepository {
 

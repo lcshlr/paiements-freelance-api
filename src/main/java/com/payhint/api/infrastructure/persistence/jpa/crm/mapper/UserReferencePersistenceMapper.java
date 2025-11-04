@@ -2,7 +2,7 @@ package com.payhint.api.infrastructure.persistence.jpa.crm.mapper;
 
 import org.springframework.stereotype.Component;
 
-import com.payhint.api.domain.crm.valueobjects.UserId;
+import com.payhint.api.domain.crm.valueobject.UserId;
 import com.payhint.api.infrastructure.persistence.jpa.crm.entity.UserJpaEntity;
 
 import jakarta.persistence.EntityManager;

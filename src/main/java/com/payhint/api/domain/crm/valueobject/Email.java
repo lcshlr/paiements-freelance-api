@@ -1,8 +1,8 @@
-package com.payhint.api.domain.crm.valueobjects;
+package com.payhint.api.domain.crm.valueobject;
 
 import java.util.regex.Pattern;
 
-import com.payhint.api.domain.shared.exceptions.InvalidPropertyException;
+import com.payhint.api.domain.shared.exception.InvalidPropertyException;
 
 public record Email(String value) {
 

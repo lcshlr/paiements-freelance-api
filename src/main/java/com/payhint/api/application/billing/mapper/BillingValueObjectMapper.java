@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 
 import org.mapstruct.Mapper;
 
-import com.payhint.api.domain.billing.valueobjects.InstallmentId;
-import com.payhint.api.domain.billing.valueobjects.InvoiceId;
-import com.payhint.api.domain.billing.valueobjects.InvoiceReference;
-import com.payhint.api.domain.billing.valueobjects.Money;
-import com.payhint.api.domain.billing.valueobjects.PaymentId;
+import com.payhint.api.domain.billing.valueobject.InstallmentId;
+import com.payhint.api.domain.billing.valueobject.InvoiceId;
+import com.payhint.api.domain.billing.valueobject.InvoiceReference;
+import com.payhint.api.domain.billing.valueobject.Money;
+import com.payhint.api.domain.billing.valueobject.PaymentId;
 
 @Mapper(componentModel = "spring")
 public interface BillingValueObjectMapper {

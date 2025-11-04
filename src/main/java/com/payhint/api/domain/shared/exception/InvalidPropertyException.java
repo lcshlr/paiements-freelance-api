@@ -1,4 +1,4 @@
-package com.payhint.api.domain.shared.exceptions;
+package com.payhint.api.domain.shared.exception;
 
 public class InvalidPropertyException extends DomainException {
     public InvalidPropertyException(String message) {

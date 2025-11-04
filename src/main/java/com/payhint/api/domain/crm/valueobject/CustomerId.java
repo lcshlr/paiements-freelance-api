@@ -1,8 +1,8 @@
-package com.payhint.api.domain.crm.valueobjects;
+package com.payhint.api.domain.crm.valueobject;
 
 import java.util.UUID;
 
-import com.payhint.api.domain.shared.valueobjects.EntityId;
+import com.payhint.api.domain.shared.valueobject.EntityId;
 
 public record CustomerId(UUID value) implements EntityId {
 

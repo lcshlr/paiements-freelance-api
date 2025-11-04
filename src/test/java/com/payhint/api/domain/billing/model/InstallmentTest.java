@@ -13,10 +13,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.payhint.api.domain.billing.valueobjects.InstallmentId;
-import com.payhint.api.domain.billing.valueobjects.InvoiceId;
-import com.payhint.api.domain.billing.valueobjects.Money;
-import com.payhint.api.domain.billing.valueobjects.PaymentId;
+import com.payhint.api.domain.billing.valueobject.InstallmentId;
+import com.payhint.api.domain.billing.valueobject.InvoiceId;
+import com.payhint.api.domain.billing.valueobject.Money;
+import com.payhint.api.domain.billing.valueobject.PaymentId;
 
 @DisplayName("Installment Domain Model Tests")
 public class InstallmentTest {

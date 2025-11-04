@@ -1,8 +1,8 @@
-package com.payhint.api.domain.billing.exceptions;
+package com.payhint.api.domain.billing.exception;
 
-import com.payhint.api.domain.billing.valueobjects.InstallmentId;
-import com.payhint.api.domain.billing.valueobjects.InvoiceId;
-import com.payhint.api.domain.shared.exceptions.DomainException;
+import com.payhint.api.domain.billing.valueobject.InstallmentId;
+import com.payhint.api.domain.billing.valueobject.InvoiceId;
+import com.payhint.api.domain.shared.exception.DomainException;
 
 public class InstallmentDoesNotBelongToInvoiceException extends DomainException {
     public InstallmentDoesNotBelongToInvoiceException(InstallmentId installmentId, InvoiceId invoiceId) {

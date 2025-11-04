@@ -14,10 +14,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.payhint.api.application.shared.exceptions.AlreadyExistsException;
-import com.payhint.api.application.shared.exceptions.NotFoundException;
-import com.payhint.api.application.shared.exceptions.PermissionDeniedException;
-import com.payhint.api.domain.shared.exceptions.DomainException;
+import com.payhint.api.application.shared.exception.AlreadyExistsException;
+import com.payhint.api.application.shared.exception.NotFoundException;
+import com.payhint.api.application.shared.exception.PermissionDeniedException;
+import com.payhint.api.domain.shared.exception.DomainException;
 
 import jakarta.servlet.http.HttpServletRequest;
 

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.DisplayName;
 
+import com.payhint.api.domain.billing.valueobject.InvoiceId;
 import com.payhint.api.domain.shared.valueobjects.EntityIdTest;
 
 @DisplayName("InvoiceId Value Object Tests")

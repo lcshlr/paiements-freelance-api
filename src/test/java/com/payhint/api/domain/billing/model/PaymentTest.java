@@ -12,9 +12,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import com.payhint.api.domain.billing.valueobjects.InstallmentId;
-import com.payhint.api.domain.billing.valueobjects.Money;
-import com.payhint.api.domain.billing.valueobjects.PaymentId;
+import com.payhint.api.domain.billing.valueobject.InstallmentId;
+import com.payhint.api.domain.billing.valueobject.Money;
+import com.payhint.api.domain.billing.valueobject.PaymentId;
 
 @DisplayName("Payment Domain Model Tests")
 public class PaymentTest {

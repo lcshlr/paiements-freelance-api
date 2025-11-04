@@ -1,4 +1,4 @@
-package com.payhint.api.domain.billing.valueobjects;
+package com.payhint.api.domain.billing.valueobject;
 
 public record InvoiceReference(String value) {
     public InvoiceReference {

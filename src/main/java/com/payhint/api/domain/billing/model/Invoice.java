@@ -4,12 +4,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.payhint.api.domain.billing.exceptions.InstallmentDoesNotBelongToInvoiceException;
-import com.payhint.api.domain.billing.exceptions.InvalidMoneyValueException;
-import com.payhint.api.domain.billing.valueobjects.InvoiceId;
-import com.payhint.api.domain.billing.valueobjects.InvoiceReference;
-import com.payhint.api.domain.billing.valueobjects.Money;
-import com.payhint.api.domain.crm.valueobjects.CustomerId;
+import com.payhint.api.domain.billing.exception.InstallmentDoesNotBelongToInvoiceException;
+import com.payhint.api.domain.billing.exception.InvalidMoneyValueException;
+import com.payhint.api.domain.billing.valueobject.InvoiceId;
+import com.payhint.api.domain.billing.valueobject.InvoiceReference;
+import com.payhint.api.domain.billing.valueobject.Money;
+import com.payhint.api.domain.crm.valueobject.CustomerId;
 
 import lombok.Getter;
 import lombok.NonNull;

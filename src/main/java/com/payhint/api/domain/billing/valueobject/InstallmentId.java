@@ -1,8 +1,8 @@
-package com.payhint.api.domain.billing.valueobjects;
+package com.payhint.api.domain.billing.valueobject;
 
 import java.util.UUID;
 
-import com.payhint.api.domain.shared.valueobjects.EntityId;
+import com.payhint.api.domain.shared.valueobject.EntityId;
 
 public record InstallmentId(UUID value) implements EntityId {
     public InstallmentId {

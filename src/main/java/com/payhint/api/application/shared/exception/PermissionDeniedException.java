@@ -1,4 +1,4 @@
-package com.payhint.api.application.shared.exceptions;
+package com.payhint.api.application.shared.exception;
 
 public class PermissionDeniedException extends RuntimeException {
     public PermissionDeniedException(String message) {

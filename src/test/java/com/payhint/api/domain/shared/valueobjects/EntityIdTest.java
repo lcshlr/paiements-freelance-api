@@ -11,7 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.payhint.api.domain.shared.exceptions.InvalidPropertyException;
+import com.payhint.api.domain.shared.exception.InvalidPropertyException;
+import com.payhint.api.domain.shared.valueobject.EntityId;
 
 public abstract class EntityIdTest<T extends EntityId> {
 

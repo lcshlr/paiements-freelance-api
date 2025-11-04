@@ -2,10 +2,10 @@ package com.payhint.api.domain.crm.model;
 
 import java.time.LocalDateTime;
 
-import com.payhint.api.domain.crm.valueobjects.CustomerId;
-import com.payhint.api.domain.crm.valueobjects.Email;
-import com.payhint.api.domain.crm.valueobjects.UserId;
-import com.payhint.api.domain.shared.exceptions.InvalidPropertyException;
+import com.payhint.api.domain.crm.valueobject.CustomerId;
+import com.payhint.api.domain.crm.valueobject.Email;
+import com.payhint.api.domain.crm.valueobject.UserId;
+import com.payhint.api.domain.shared.exception.InvalidPropertyException;
 
 import lombok.Getter;
 import lombok.NonNull;

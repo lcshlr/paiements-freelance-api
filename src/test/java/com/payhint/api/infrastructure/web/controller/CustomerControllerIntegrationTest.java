@@ -28,7 +28,7 @@ import com.payhint.api.domain.crm.model.Customer;
 import com.payhint.api.domain.crm.model.User;
 import com.payhint.api.domain.crm.repository.CustomerRepository;
 import com.payhint.api.domain.crm.repository.UserRepository;
-import com.payhint.api.domain.crm.valueobjects.Email;
+import com.payhint.api.domain.crm.valueobject.Email;
 import com.payhint.api.infrastructure.persistence.jpa.crm.repository.CustomerSpringRepository;
 import com.payhint.api.infrastructure.persistence.jpa.crm.repository.UserSpringRepository;
 import com.payhint.api.infrastructure.security.JwtTokenProvider;

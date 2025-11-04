@@ -10,7 +10,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.payhint.api.domain.shared.exceptions.InvalidPropertyException;
+import com.payhint.api.domain.crm.valueobject.Email;
+import com.payhint.api.domain.shared.exception.InvalidPropertyException;
 
 @DisplayName("Email Value Object Tests")
 class EmailTest {

@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.payhint.api.application.crm.dto.request.CreateCustomerRequest;
 import com.payhint.api.application.crm.dto.request.UpdateCustomerRequest;
 import com.payhint.api.application.crm.dto.response.CustomerResponse;
-import com.payhint.api.application.crm.usecases.CustomerManagementUseCase;
-import com.payhint.api.domain.crm.valueobjects.CustomerId;
-import com.payhint.api.domain.crm.valueobjects.UserId;
+import com.payhint.api.application.crm.usecase.CustomerManagementUseCase;
+import com.payhint.api.domain.crm.valueobject.CustomerId;
+import com.payhint.api.domain.crm.valueobject.UserId;
 import com.payhint.api.infrastructure.security.UserPrincipal;
 
 import jakarta.validation.Valid;
