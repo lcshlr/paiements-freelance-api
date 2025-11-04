@@ -7,37 +7,35 @@ import com.payhint.api.domain.crm.valueobjects.Email;
 import com.payhint.api.domain.crm.valueobjects.UserId;
 import com.payhint.api.domain.shared.exceptions.InvalidPropertyException;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 
 @Getter
-@AllArgsConstructor
-@Builder
 public class Customer {
     private CustomerId id;
+    @NonNull
     private UserId userId;
+    @NonNull
     private String companyName;
+    @NonNull
     private Email contactEmail;
+    @NonNull
     private LocalDateTime createdAt;
+    @NonNull
     private LocalDateTime updatedAt;
 
-    public Customer(UserId userId, String companyName, Email contactEmail) {
-        if (userId == null) {
-            throw new InvalidPropertyException("UserId cannot be null");
-        }
-        if (companyName == null || companyName.isBlank()) {
-            throw new InvalidPropertyException("Company name cannot be null or empty");
-        }
-        if (contactEmail == null) {
-            throw new InvalidPropertyException("Contact email cannot be null");
-        }
-        this.id = null;
+    public Customer(CustomerId id, @NonNull UserId userId, @NonNull String companyName, @NonNull Email contactEmail,
+            @NonNull LocalDateTime createdAt, @NonNull LocalDateTime updatedAt) {
+        this.id = id;
         this.userId = userId;
         this.companyName = companyName;
         this.contactEmail = contactEmail;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public static Customer create(UserId userId, String companyName, Email contactEmail) {
+        return new Customer(null, userId, companyName, contactEmail, LocalDateTime.now(), LocalDateTime.now());
     }
 
     public void updateInformation(String companyName, Email contactEmail) {

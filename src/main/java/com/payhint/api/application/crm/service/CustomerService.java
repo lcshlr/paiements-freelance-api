@@ -58,7 +58,7 @@ public class CustomerService implements CustomerManagementUseCase {
             throw new AlreadyExistsException("A customer with the same company name already exists for this user.");
         }
 
-        Customer customer = customerMapper.toDomain(userId, request);
+        Customer customer = Customer.create(userId, request.companyName(), new Email(request.contactEmail()));
         Customer savedCustomer = customerRepository.save(customer);
         return customerMapper.toResponse(savedCustomer);
     }

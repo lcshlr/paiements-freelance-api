@@ -46,7 +46,7 @@ public class AuthenticationService implements AuthenticationUseCase {
             throw new AlreadyExistsException("User with email " + email + " already exists.");
         });
 
-        User user = new User(email, passwordEncoder.encode(request.password()), request.firstName(),
+        User user = User.create(email, passwordEncoder.encode(request.password()), request.firstName(),
                 request.lastName());
         User savedUser = userRepository.register(user);
         return userMapper.toResponse(savedUser);

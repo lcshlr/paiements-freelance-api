@@ -3,21 +3,14 @@ package com.payhint.api.domain.crm.model;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import com.payhint.api.domain.crm.valueobjects.Email;
 import com.payhint.api.domain.crm.valueobjects.UserId;
-
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 
 @DisplayName("User Domain Model Tests")
 class UserTest {
@@ -29,14 +22,6 @@ class UserTest {
     private static final String UPDATED_FIRST_NAME = "Jane";
     private static final String UPDATED_LAST_NAME = "Smith";
 
-    private static Validator validator;
-
-    @BeforeAll
-    static void setUpValidator() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
-
     @Nested
     @DisplayName("Constructor Tests")
     class ConstructorTests {
@@ -46,7 +31,7 @@ class UserTest {
         void shouldCreateUserWithValidParameters() {
             Email email = new Email(VALID_EMAIL);
 
-            User user = new User(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
+            User user = User.create(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
 
             assertThat(user).isNotNull();
             assertThat(user.getId()).isNull();
@@ -56,9 +41,6 @@ class UserTest {
             assertThat(user.getLastName()).isEqualTo(VALID_LAST_NAME);
             assertThat(user.getCreatedAt()).isNotNull();
             assertThat(user.getUpdatedAt()).isAfterOrEqualTo(user.getCreatedAt());
-
-            Set<ConstraintViolation<User>> violations = validator.validate(user);
-            assertThat(violations).isEmpty();
         }
 
         @Test
@@ -68,8 +50,7 @@ class UserTest {
             Email email = new Email(VALID_EMAIL);
             LocalDateTime now = LocalDateTime.now();
 
-            User user = User.builder().id(id).email(email).password(VALID_PASSWORD).firstName(VALID_FIRST_NAME)
-                    .lastName(VALID_LAST_NAME).createdAt(now).updatedAt(now).build();
+            User user = new User(id, email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME, now, now);
 
             assertThat(user).isNotNull();
             assertThat(user.getId()).isEqualTo(id);
@@ -79,9 +60,6 @@ class UserTest {
             assertThat(user.getLastName()).isEqualTo(VALID_LAST_NAME);
             assertThat(user.getCreatedAt()).isEqualTo(now);
             assertThat(user.getUpdatedAt()).isEqualTo(now);
-
-            Set<ConstraintViolation<User>> violations = validator.validate(user);
-            assertThat(violations).isEmpty();
         }
     }
 
@@ -93,15 +71,12 @@ class UserTest {
         @DisplayName("Should update password successfully")
         void shouldUpdatePassword() {
             Email email = new Email(VALID_EMAIL);
-            User user = new User(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
+            User user = User.create(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
             String newPassword = "newSecurePassword456";
 
             user.changePassword(newPassword);
 
             assertThat(user.getPassword()).isEqualTo(newPassword);
-
-            Set<ConstraintViolation<User>> violations = validator.validate(user);
-            assertThat(violations).isEmpty();
         }
     }
 
@@ -113,7 +88,7 @@ class UserTest {
         @DisplayName("Should update profile with valid first and last name")
         void shouldUpdateProfileWithValidNames() {
             Email email = new Email(VALID_EMAIL);
-            User user = new User(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
+            User user = User.create(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
             LocalDateTime beforeUpdate = LocalDateTime.now();
 
             user.updateProfile(null, UPDATED_FIRST_NAME, UPDATED_LAST_NAME);
@@ -122,18 +97,13 @@ class UserTest {
             assertThat(user.getLastName()).isEqualTo(UPDATED_LAST_NAME);
             assertThat(user.getUpdatedAt()).isNotNull();
             assertThat(user.getUpdatedAt()).isAfterOrEqualTo(beforeUpdate);
-
-            Set<ConstraintViolation<User>> violations = validator.validate(user);
-            assertThat(violations).isEmpty();
         }
 
         @Test
         @DisplayName("Should update profile and set updatedAt timestamp")
         void shouldSetUpdatedAtTimestamp() {
             Email email = new Email(VALID_EMAIL);
-            User user = User.builder().email(email).password(VALID_PASSWORD).firstName(VALID_FIRST_NAME)
-                    .lastName(VALID_LAST_NAME).createdAt(LocalDateTime.now().minusDays(5)).updatedAt(null).build();
-
+            User user = User.create(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
             LocalDateTime beforeUpdate = LocalDateTime.now();
             user.updateProfile(null, UPDATED_FIRST_NAME, UPDATED_LAST_NAME);
             LocalDateTime afterUpdate = LocalDateTime.now();
@@ -146,7 +116,7 @@ class UserTest {
         @DisplayName("Should update profile multiple times with different timestamps")
         void shouldUpdateProfileMultipleTimes() throws InterruptedException {
             Email email = new Email(VALID_EMAIL);
-            User user = new User(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
+            User user = User.create(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
 
             user.updateProfile(null, "FirstUpdate", "LastUpdate1");
             LocalDateTime firstUpdate = user.getUpdatedAt();
@@ -165,23 +135,20 @@ class UserTest {
         @DisplayName("Should update profile with same values")
         void shouldUpdateProfileWithSameValues() {
             Email email = new Email(VALID_EMAIL);
-            User user = new User(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
+            User user = User.create(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
 
             user.updateProfile(null, VALID_FIRST_NAME, VALID_LAST_NAME);
 
             assertThat(user.getFirstName()).isEqualTo(VALID_FIRST_NAME);
             assertThat(user.getLastName()).isEqualTo(VALID_LAST_NAME);
             assertThat(user.getUpdatedAt()).isNotNull();
-
-            Set<ConstraintViolation<User>> violations = validator.validate(user);
-            assertThat(violations).isEmpty();
         }
 
         @Test
         @DisplayName("Should update email when provided")
         void shouldUpdateEmailWhenProvided() {
             Email email = new Email(VALID_EMAIL);
-            User user = new User(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
+            User user = User.create(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
             Email newEmail = new Email("new.email@example.com");
 
             user.updateProfile(newEmail, null, null);
@@ -195,7 +162,7 @@ class UserTest {
         @DisplayName("Should update all profile fields when all provided")
         void shouldUpdateAllProfileFieldsWhenAllProvided() {
             Email email = new Email(VALID_EMAIL);
-            User user = new User(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
+            User user = User.create(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
             Email newEmail = new Email("updated.email@example.com");
 
             user.updateProfile(newEmail, UPDATED_FIRST_NAME, UPDATED_LAST_NAME);
@@ -209,7 +176,7 @@ class UserTest {
         @DisplayName("Should not update profile when all values are null")
         void shouldNotUpdateWhenAllValuesAreNull() {
             Email email = new Email(VALID_EMAIL);
-            User user = new User(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
+            User user = User.create(email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME);
             LocalDateTime originalUpdatedAt = user.getUpdatedAt();
 
             user.updateProfile(null, null, null);
@@ -230,8 +197,8 @@ class UserTest {
         void shouldPreserveCreatedAtWhenUpdatingProfile() {
             LocalDateTime createdAt = LocalDateTime.now().minusDays(10);
             Email email = new Email(VALID_EMAIL);
-            User user = User.builder().email(email).password(VALID_PASSWORD).firstName(VALID_FIRST_NAME)
-                    .lastName(VALID_LAST_NAME).createdAt(createdAt).build();
+            UserId id = new UserId(UUID.randomUUID());
+            User user = new User(id, email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME, createdAt, createdAt);
 
             user.updateProfile(null, UPDATED_FIRST_NAME, UPDATED_LAST_NAME);
 
@@ -243,8 +210,8 @@ class UserTest {
         void shouldNotModifyCreatedAtWhenSettingPassword() {
             LocalDateTime createdAt = LocalDateTime.now().minusDays(5);
             Email email = new Email(VALID_EMAIL);
-            User user = User.builder().email(email).password(VALID_PASSWORD).firstName(VALID_FIRST_NAME)
-                    .lastName(VALID_LAST_NAME).createdAt(createdAt).build();
+            UserId id = new UserId(UUID.randomUUID());
+            User user = new User(id, email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME, createdAt, createdAt);
 
             user.changePassword("newPassword");
 
@@ -263,8 +230,7 @@ class UserTest {
             Email email = new Email(VALID_EMAIL);
             LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
 
-            User user = User.builder().id(id).email(email).password(VALID_PASSWORD).firstName(VALID_FIRST_NAME)
-                    .lastName(VALID_LAST_NAME).createdAt(createdAt).build();
+            User user = new User(id, email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME, createdAt, createdAt);
 
             user.updateProfile(null, UPDATED_FIRST_NAME, UPDATED_LAST_NAME);
 
@@ -286,8 +252,7 @@ class UserTest {
             LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
             LocalDateTime updatedAt = LocalDateTime.now().minusHours(1);
 
-            User user = User.builder().id(id).email(email).password(VALID_PASSWORD).firstName(VALID_FIRST_NAME)
-                    .lastName(VALID_LAST_NAME).createdAt(createdAt).updatedAt(updatedAt).build();
+            User user = new User(id, email, VALID_PASSWORD, VALID_FIRST_NAME, VALID_LAST_NAME, createdAt, updatedAt);
 
             String newPassword = "changedPassword";
 

@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -78,7 +79,8 @@ class CustomerControllerIntegrationTest {
         customerSpringRepository.deleteAll();
         userSpringRepository.deleteAll();
 
-        testUser = new User(new Email(TEST_USER_EMAIL), TEST_USER_PASSWORD, TEST_USER_FIRST_NAME, TEST_USER_LAST_NAME);
+        testUser = User.create(new Email(TEST_USER_EMAIL), TEST_USER_PASSWORD, TEST_USER_FIRST_NAME,
+                TEST_USER_LAST_NAME);
         testUser = userRepository.register(testUser);
 
         UserPrincipal userPrincipal = new UserPrincipal(testUser.getId().value(), testUser.getEmail().value(),
@@ -96,7 +98,8 @@ class CustomerControllerIntegrationTest {
             CreateCustomerRequest request = new CreateCustomerRequest(TEST_COMPANY_NAME, TEST_CONTACT_EMAIL);
 
             mockMvc.perform(post("/api/customers").header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isCreated()).andExpect(jsonPath("$.id").isNotEmpty())
                     .andExpect(jsonPath("$.userId").value(testUser.getId().toString()))
                     .andExpect(jsonPath("$.companyName").value(TEST_COMPANY_NAME))
@@ -109,7 +112,8 @@ class CustomerControllerIntegrationTest {
             CreateCustomerRequest request = new CreateCustomerRequest("", TEST_CONTACT_EMAIL);
 
             mockMvc.perform(post("/api/customers").header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
@@ -124,7 +128,8 @@ class CustomerControllerIntegrationTest {
             CreateCustomerRequest request = new CreateCustomerRequest(null, TEST_CONTACT_EMAIL);
 
             mockMvc.perform(post("/api/customers").header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
@@ -138,7 +143,8 @@ class CustomerControllerIntegrationTest {
             CreateCustomerRequest request = new CreateCustomerRequest(longCompanyName, TEST_CONTACT_EMAIL);
 
             mockMvc.perform(post("/api/customers").header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
@@ -151,7 +157,8 @@ class CustomerControllerIntegrationTest {
             CreateCustomerRequest request = new CreateCustomerRequest(TEST_COMPANY_NAME, "");
 
             mockMvc.perform(post("/api/customers").header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
@@ -164,7 +171,8 @@ class CustomerControllerIntegrationTest {
             CreateCustomerRequest request = new CreateCustomerRequest(TEST_COMPANY_NAME, null);
 
             mockMvc.perform(post("/api/customers").header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
@@ -177,7 +185,8 @@ class CustomerControllerIntegrationTest {
             CreateCustomerRequest request = new CreateCustomerRequest(TEST_COMPANY_NAME, "invalid-email");
 
             mockMvc.perform(post("/api/customers").header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
@@ -191,7 +200,8 @@ class CustomerControllerIntegrationTest {
             CreateCustomerRequest request = new CreateCustomerRequest(TEST_COMPANY_NAME, longEmail);
 
             mockMvc.perform(post("/api/customers").header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
@@ -203,8 +213,9 @@ class CustomerControllerIntegrationTest {
         void shouldRejectWithoutAuthenticationToken() throws Exception {
             CreateCustomerRequest request = new CreateCustomerRequest(TEST_COMPANY_NAME, TEST_CONTACT_EMAIL);
 
-            mockMvc.perform(post("/api/customers").contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request))).andExpect(status().isForbidden());
+            mockMvc.perform(post("/api/customers").contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
+                    .andExpect(status().isForbidden());
         }
 
         @Test
@@ -213,7 +224,8 @@ class CustomerControllerIntegrationTest {
             CreateCustomerRequest request = new CreateCustomerRequest(TEST_COMPANY_NAME, TEST_CONTACT_EMAIL);
 
             mockMvc.perform(post("/api/customers").header("Authorization", "Bearer " + INVALID_JWT_TOKEN)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isForbidden());
         }
 
@@ -223,7 +235,8 @@ class CustomerControllerIntegrationTest {
             CreateCustomerRequest request = new CreateCustomerRequest(TEST_COMPANY_NAME, TEST_CONTACT_EMAIL);
 
             mockMvc.perform(post("/api/customers").header("Authorization", jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isForbidden());
         }
     }
@@ -235,7 +248,7 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should successfully retrieve existing customer")
         void shouldRetrieveExistingCustomer() throws Exception {
-            Customer customer = new Customer(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
+            Customer customer = Customer.create(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
             customer = customerRepository.save(customer);
 
             mockMvc.perform(get("/api/customers/{id}", customer.getId()).header("Authorization", "Bearer " + jwtToken))
@@ -261,10 +274,10 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should return 403 when trying to access another user's customer")
         void shouldReturn403WhenAccessingAnotherUsersCustomer() throws Exception {
-            User anotherUser = new User(new Email("another@example.com"), "Password123!", "Jane", "Smith");
+            User anotherUser = User.create(new Email("another@example.com"), "Password123!", "Jane", "Smith");
             anotherUser = userRepository.register(anotherUser);
 
-            Customer anotherCustomer = new Customer(anotherUser.getId(), "Another Company",
+            Customer anotherCustomer = Customer.create(anotherUser.getId(), "Another Company",
                     new Email("contact@another.com"));
             anotherCustomer = customerRepository.save(anotherCustomer);
 
@@ -309,8 +322,8 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should successfully retrieve all customers for authenticated user")
         void shouldRetrieveAllCustomersForUser() throws Exception {
-            Customer customer1 = new Customer(testUser.getId(), "Company A", new Email("contact@companya.com"));
-            Customer customer2 = new Customer(testUser.getId(), "Company B", new Email("contact@companyb.com"));
+            Customer customer1 = Customer.create(testUser.getId(), "Company A", new Email("contact@companya.com"));
+            Customer customer2 = Customer.create(testUser.getId(), "Company B", new Email("contact@companyb.com"));
             customerRepository.save(customer1);
             customerRepository.save(customer2);
 
@@ -333,12 +346,13 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should only return customers belonging to authenticated user")
         void shouldOnlyReturnAuthenticatedUserCustomers() throws Exception {
-            Customer ownCustomer = new Customer(testUser.getId(), "Own Company", new Email("own@example.com"));
+            Customer ownCustomer = Customer.create(testUser.getId(), "Own Company", new Email("own@example.com"));
             customerRepository.save(ownCustomer);
 
-            User anotherUser = new User(new Email("another@example.com"), "Password123!", "Jane", "Smith");
+            User anotherUser = User.create(new Email("another@example.com"), "Password123!", "Jane", "Smith");
             anotherUser = userRepository.register(anotherUser);
-            Customer otherCustomer = new Customer(anotherUser.getId(), "Other Company", new Email("other@example.com"));
+            Customer otherCustomer = Customer.create(anotherUser.getId(), "Other Company",
+                    new Email("other@example.com"));
             customerRepository.save(otherCustomer);
 
             mockMvc.perform(get("/api/customers").header("Authorization", "Bearer " + jwtToken))
@@ -369,13 +383,14 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should successfully update customer with both fields")
         void shouldUpdateCustomerWithBothFields() throws Exception {
-            Customer customer = new Customer(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
+            Customer customer = Customer.create(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
             customer = customerRepository.save(customer);
 
             UpdateCustomerRequest request = new UpdateCustomerRequest("Updated Company", "updated@example.com");
 
             mockMvc.perform(put("/api/customers/{id}", customer.getId()).header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(customer.getId().toString()))
                     .andExpect(jsonPath("$.companyName").value("Updated Company"))
                     .andExpect(jsonPath("$.contactEmail").value("updated@example.com"));
@@ -384,13 +399,14 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should successfully update only company name")
         void shouldUpdateOnlyCompanyName() throws Exception {
-            Customer customer = new Customer(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
+            Customer customer = Customer.create(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
             customer = customerRepository.save(customer);
 
             UpdateCustomerRequest request = new UpdateCustomerRequest("Updated Company", null);
 
             mockMvc.perform(put("/api/customers/{id}", customer.getId()).header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(customer.getId().toString()))
                     .andExpect(jsonPath("$.companyName").value("Updated Company"))
                     .andExpect(jsonPath("$.contactEmail").value(TEST_CONTACT_EMAIL));
@@ -399,13 +415,14 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should successfully update only contact email")
         void shouldUpdateOnlyContactEmail() throws Exception {
-            Customer customer = new Customer(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
+            Customer customer = Customer.create(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
             customer = customerRepository.save(customer);
 
             UpdateCustomerRequest request = new UpdateCustomerRequest(null, "updated@example.com");
 
             mockMvc.perform(put("/api/customers/{id}", customer.getId()).header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(customer.getId().toString()))
                     .andExpect(jsonPath("$.companyName").value(TEST_COMPANY_NAME))
                     .andExpect(jsonPath("$.contactEmail").value("updated@example.com"));
@@ -414,13 +431,14 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should accept update with both fields null")
         void shouldAcceptUpdateWithBothFieldsNull() throws Exception {
-            Customer customer = new Customer(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
+            Customer customer = Customer.create(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
             customer = customerRepository.save(customer);
 
             UpdateCustomerRequest request = new UpdateCustomerRequest(null, null);
 
             mockMvc.perform(put("/api/customers/{id}", customer.getId()).header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(customer.getId().toString()))
                     .andExpect(jsonPath("$.companyName").value(TEST_COMPANY_NAME))
                     .andExpect(jsonPath("$.contactEmail").value(TEST_CONTACT_EMAIL));
@@ -433,7 +451,8 @@ class CustomerControllerIntegrationTest {
             UpdateCustomerRequest request = new UpdateCustomerRequest("Updated Company", "updated@example.com");
 
             mockMvc.perform(put("/api/customers/{id}", nonExistentId).header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isNotFound()).andExpect(jsonPath("$.status").value(404))
                     .andExpect(jsonPath("$.title").value("Resource Not Found"))
                     .andExpect(jsonPath("$.timestamp").isNotEmpty());
@@ -442,10 +461,10 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should return 403 when trying to update another user's customer")
         void shouldReturn403WhenUpdatingAnotherUsersCustomer() throws Exception {
-            User anotherUser = new User(new Email("another@example.com"), "Password123!", "Jane", "Smith");
+            User anotherUser = User.create(new Email("another@example.com"), "Password123!", "Jane", "Smith");
             anotherUser = userRepository.register(anotherUser);
 
-            Customer anotherCustomer = new Customer(anotherUser.getId(), "Another Company",
+            Customer anotherCustomer = Customer.create(anotherUser.getId(), "Another Company",
                     new Email("contact@another.com"));
             anotherCustomer = customerRepository.save(anotherCustomer);
 
@@ -453,7 +472,8 @@ class CustomerControllerIntegrationTest {
 
             mockMvc.perform(
                     put("/api/customers/{id}", anotherCustomer.getId()).header("Authorization", "Bearer " + jwtToken)
-                            .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                            .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                            .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isForbidden()).andExpect(jsonPath("$.status").value(403))
                     .andExpect(jsonPath("$.title").value("Permission Denied"))
                     .andExpect(jsonPath("$.timestamp").isNotEmpty());
@@ -462,14 +482,15 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should reject update with company name exceeding 100 characters")
         void shouldRejectTooLongCompanyName() throws Exception {
-            Customer customer = new Customer(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
+            Customer customer = Customer.create(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
             customer = customerRepository.save(customer);
 
             String longCompanyName = "A".repeat(101);
             UpdateCustomerRequest request = new UpdateCustomerRequest(longCompanyName, null);
 
             mockMvc.perform(put("/api/customers/{id}", customer.getId()).header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
@@ -479,13 +500,14 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should reject update with invalid email format")
         void shouldRejectInvalidEmailFormat() throws Exception {
-            Customer customer = new Customer(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
+            Customer customer = Customer.create(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
             customer = customerRepository.save(customer);
 
             UpdateCustomerRequest request = new UpdateCustomerRequest(null, "invalid-email");
 
             mockMvc.perform(put("/api/customers/{id}", customer.getId()).header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
@@ -495,14 +517,15 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should reject update with contact email exceeding 100 characters")
         void shouldRejectTooLongContactEmail() throws Exception {
-            Customer customer = new Customer(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
+            Customer customer = Customer.create(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
             customer = customerRepository.save(customer);
 
             String longEmail = "a".repeat(90) + "@example.com";
             UpdateCustomerRequest request = new UpdateCustomerRequest(null, longEmail);
 
             mockMvc.perform(put("/api/customers/{id}", customer.getId()).header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
@@ -515,7 +538,8 @@ class CustomerControllerIntegrationTest {
             UpdateCustomerRequest request = new UpdateCustomerRequest("Updated Company", "updated@example.com");
 
             mockMvc.perform(put("/api/customers/{id}", "invalid-uuid").header("Authorization", "Bearer " + jwtToken)
-                    .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").isNotEmpty());
         }
@@ -526,8 +550,10 @@ class CustomerControllerIntegrationTest {
             UUID customerId = UUID.randomUUID();
             UpdateCustomerRequest request = new UpdateCustomerRequest("Updated Company", "updated@example.com");
 
-            mockMvc.perform(put("/api/customers/{id}", customerId).contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request))).andExpect(status().isForbidden());
+            mockMvc.perform(put("/api/customers/{id}", customerId)
+                    .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                    .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
+                    .andExpect(status().isForbidden());
         }
 
         @Test
@@ -538,7 +564,8 @@ class CustomerControllerIntegrationTest {
 
             mockMvc.perform(
                     put("/api/customers/{id}", customerId).header("Authorization", "Bearer " + INVALID_JWT_TOKEN)
-                            .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
+                            .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                            .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isForbidden());
         }
     }
@@ -550,7 +577,7 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should successfully delete existing customer")
         void shouldDeleteExistingCustomer() throws Exception {
-            Customer customer = new Customer(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
+            Customer customer = Customer.create(testUser.getId(), TEST_COMPANY_NAME, new Email(TEST_CONTACT_EMAIL));
             customer = customerRepository.save(customer);
 
             mockMvc.perform(
@@ -572,10 +599,10 @@ class CustomerControllerIntegrationTest {
         @Test
         @DisplayName("Should return 403 when trying to delete another user's customer")
         void shouldReturn403WhenDeletingAnotherUsersCustomer() throws Exception {
-            User anotherUser = new User(new Email("another@example.com"), "Password123!", "Jane", "Smith");
+            User anotherUser = User.create(new Email("another@example.com"), "Password123!", "Jane", "Smith");
             anotherUser = userRepository.register(anotherUser);
 
-            Customer anotherCustomer = new Customer(anotherUser.getId(), "Another Company",
+            Customer anotherCustomer = Customer.create(anotherUser.getId(), "Another Company",
                     new Email("contact@another.com"));
             anotherCustomer = customerRepository.save(anotherCustomer);
 

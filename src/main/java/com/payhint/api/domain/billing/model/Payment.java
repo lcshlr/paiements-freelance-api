@@ -7,32 +7,50 @@ import com.payhint.api.domain.billing.valueobjects.InstallmentId;
 import com.payhint.api.domain.billing.valueobjects.Money;
 import com.payhint.api.domain.billing.valueobjects.PaymentId;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 
 @Getter
-@Builder
-@AllArgsConstructor
 public class Payment {
 
     private PaymentId id;
+    @NonNull
     private InstallmentId installmentId;
+    @NonNull
     private Money amount;
+    @NonNull
     private LocalDate paymentDate;
+    @NonNull
     private LocalDateTime createdAt;
+    @NonNull
     private LocalDateTime updatedAt;
 
-    public Payment(InstallmentId installmentId, Money amount, LocalDate paymentDate) {
+    public Payment(PaymentId id, @NonNull InstallmentId installmentId, @NonNull Money amount,
+            @NonNull LocalDate paymentDate, @NonNull LocalDateTime createdAt, @NonNull LocalDateTime updatedAt) {
+        this.id = id;
         this.installmentId = installmentId;
         this.amount = amount;
         this.paymentDate = paymentDate;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
-    public void updateDetails(Money amount, LocalDate paymentDate) {
-        this.amount = amount;
-        this.paymentDate = paymentDate;
-        this.updatedAt = LocalDateTime.now();
+    public static Payment create(InstallmentId installmentId, Money amount, LocalDate paymentDate) {
+        return new Payment(null, installmentId, amount, paymentDate, LocalDateTime.now(), LocalDateTime.now());
+    }
+
+    void updateDetails(Money amount, LocalDate paymentDate) {
+        boolean isUpdated = false;
+        if (amount != null) {
+            this.amount = amount;
+            isUpdated = true;
+        }
+        if (paymentDate != null) {
+            this.paymentDate = paymentDate;
+            isUpdated = true;
+        }
+        if (isUpdated) {
+            this.updatedAt = LocalDateTime.now();
+        }
     }
 }

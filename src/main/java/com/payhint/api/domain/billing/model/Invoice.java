@@ -11,37 +11,44 @@ import com.payhint.api.domain.billing.valueobjects.InvoiceReference;
 import com.payhint.api.domain.billing.valueobjects.Money;
 import com.payhint.api.domain.crm.valueobjects.CustomerId;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Getter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Invoice {
 
     private InvoiceId id;
+    @NonNull
     private CustomerId customerId;
+    @NonNull
     private InvoiceReference invoiceReference;
+    @NonNull
     private Money totalAmount;
+    @NonNull
     private String currency;
+    @NonNull
     private LocalDateTime createdAt;
+    @NonNull
     private LocalDateTime updatedAt;
 
-    @Builder.Default
-    private List<Installment> installments = new ArrayList<>();
+    private List<Installment> installments;
 
-    public Invoice(CustomerId customerId, InvoiceReference invoiceReference, Money totalAmount, String currency) {
-        this.id = null;
+    public Invoice(InvoiceId id, CustomerId customerId, InvoiceReference invoiceReference, Money totalAmount,
+            String currency, LocalDateTime createdAt, LocalDateTime updatedAt, List<Installment> installments) {
+        this.id = id;
         this.customerId = customerId;
         this.invoiceReference = invoiceReference;
         this.totalAmount = totalAmount;
         this.currency = currency;
-        this.createdAt = null;
-        this.updatedAt = null;
-        this.installments = new ArrayList<>();
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.installments = installments;
+    }
+
+    public static Invoice create(CustomerId customerId, InvoiceReference invoiceReference, Money totalAmount,
+            String currency) {
+        return new Invoice(null, customerId, invoiceReference, totalAmount, currency, LocalDateTime.now(),
+                LocalDateTime.now(), new ArrayList<>());
     }
 
     private void validateInstallmentBelonging(Installment installment) {

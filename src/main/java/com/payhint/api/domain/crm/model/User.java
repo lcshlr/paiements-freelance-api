@@ -6,24 +6,42 @@ import com.payhint.api.domain.crm.valueobjects.Email;
 import com.payhint.api.domain.crm.valueobjects.UserId;
 import com.payhint.api.domain.shared.exceptions.InvalidPropertyException;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 
 @Getter
-@AllArgsConstructor
-@Builder
 public class User {
 
     private UserId id;
+    @NonNull
     private Email email;
+    @NonNull
     private String password;
+    @NonNull
     private String firstName;
+    @NonNull
     private String lastName;
+    @NonNull
     private LocalDateTime createdAt;
+    @NonNull
     private LocalDateTime updatedAt;
 
-    public User(Email email, String password, String firstName, String lastName) {
+    public User(UserId id, @NonNull Email email, @NonNull String password, @NonNull String firstName,
+            @NonNull String lastName, @NonNull LocalDateTime createdAt, @NonNull LocalDateTime updatedAt) {
+        ensureNotBlankIfProvided("First name", firstName);
+        ensureNotBlankIfProvided("Last name", lastName);
+        ensureNotBlankIfProvided("Password", password);
+        ensurePasswordIsValid(password);
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public static User create(Email email, String password, String firstName, String lastName) {
         if (email == null) {
             throw new InvalidPropertyException("Email cannot be null");
         }
@@ -33,14 +51,10 @@ public class User {
         if (lastName == null || lastName.isBlank()) {
             throw new InvalidPropertyException("Last name cannot be empty");
         }
-        ensurePasswordIsValid(password);
-        this.id = null;
-        this.email = email;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        if (password.isBlank()) {
+            throw new InvalidPropertyException("Password cannot be empty");
+        }
+        return new User(null, email, password, firstName, lastName, LocalDateTime.now(), LocalDateTime.now());
     }
 
     private void ensurePasswordIsValid(String password) {

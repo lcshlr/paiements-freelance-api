@@ -1,7 +1,9 @@
 package com.payhint.api.application.crm.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.junit.jupiter.api.AfterEach;
@@ -20,6 +22,7 @@ import com.payhint.api.application.crm.dto.request.LoginUserRequest;
 import com.payhint.api.application.crm.dto.request.RegisterUserRequest;
 import com.payhint.api.application.crm.dto.response.LoginResponse;
 import com.payhint.api.application.crm.dto.response.UserResponse;
+import com.payhint.api.application.crm.mapper.UserMapper;
 import com.payhint.api.application.shared.exceptions.AlreadyExistsException;
 import com.payhint.api.domain.crm.model.User;
 import com.payhint.api.domain.crm.repository.UserRepository;
@@ -49,6 +52,9 @@ class AuthenticationServiceIntegrationTest {
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private UserMapper userMapper;
 
     private static final String TEST_EMAIL = "integration.test@payhint.com";
     private static final String TEST_PASSWORD = "SecurePassword123!";
@@ -148,15 +154,17 @@ class AuthenticationServiceIntegrationTest {
             RegisterUserRequest secondRequest = new RegisterUserRequest("second.user@payhint.com", "Password456!",
                     "Second", "User");
 
-            UserResponse secondUser = authenticationService.register(secondRequest);
+            UserResponse secondUserResponse = authenticationService.register(secondRequest);
 
-            assertThat(firstUser.id()).isNotEqualTo(secondUser.id());
-            assertThat(firstUser.email()).isNotEqualTo(secondUser.email());
+            assertThat(firstUser.id()).isNotEqualTo(secondUserResponse.id());
+            assertThat(firstUser.email()).isNotEqualTo(secondUserResponse.email());
+
+            Optional<User> secondUser = userRepository.findById(new UserId(secondUserResponse.id()));
 
             assertThat(userRepository.findById(new UserId(firstUser.id()))).isPresent();
-            assertThat(userRepository.findById(new UserId(secondUser.id()))).isPresent();
+            assertThat(secondUser).isPresent();
 
-            userRepository.delete(User.builder().id(new UserId(secondUser.id())).build());
+            userRepository.delete(secondUser.orElse(null));
         }
 
         @Test
@@ -222,7 +230,8 @@ class AuthenticationServiceIntegrationTest {
         @AfterEach
         void tearDown() {
             if (registeredUserId != null) {
-                userRepository.delete(User.builder().id(new UserId(registeredUserId)).build());
+                User user = userRepository.findById(new UserId(registeredUserId)).orElse(null);
+                userRepository.delete(user);
             }
         }
 
@@ -356,7 +365,8 @@ class AuthenticationServiceIntegrationTest {
         @AfterEach
         void tearDown() {
             if (registeredUserId != null) {
-                userRepository.delete(User.builder().id(new UserId(registeredUserId)).build());
+                User user = userRepository.findById(new UserId(registeredUserId)).orElse(null);
+                userRepository.delete(user);
             }
         }
 
@@ -410,11 +420,13 @@ class AuthenticationServiceIntegrationTest {
 
             registeredUserId = firstResponse.id();
 
+            Optional<User> secondUser = userRepository.findById(new UserId(secondResponse.id()));
+
             assertThat(firstResponse.id()).isNotEqualTo(secondResponse.id());
             assertThat(userRepository.findById(new UserId(firstResponse.id()))).isPresent();
-            assertThat(userRepository.findById(new UserId(secondResponse.id()))).isPresent();
+            assertThat(secondUser).isPresent();
 
-            userRepository.delete(User.builder().id(new UserId(secondResponse.id())).build());
+            userRepository.delete(secondUser.orElse(null));
         }
 
         @Test
@@ -453,7 +465,8 @@ class AuthenticationServiceIntegrationTest {
         @AfterEach
         void tearDown() {
             if (registeredUserId != null) {
-                userRepository.delete(User.builder().id(new UserId(registeredUserId)).build());
+                User user = userRepository.findById(new UserId(registeredUserId)).orElse(null);
+                userRepository.delete(user);
             }
         }
 

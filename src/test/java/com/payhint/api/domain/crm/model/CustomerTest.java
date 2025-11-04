@@ -1,12 +1,11 @@
 package com.payhint.api.domain.crm.model;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -14,11 +13,6 @@ import org.junit.jupiter.api.Test;
 import com.payhint.api.domain.crm.valueobjects.CustomerId;
 import com.payhint.api.domain.crm.valueobjects.Email;
 import com.payhint.api.domain.crm.valueobjects.UserId;
-
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 
 @DisplayName("Customer Domain Model Tests")
 class CustomerTest {
@@ -29,14 +23,6 @@ class CustomerTest {
     private static final String UPDATED_COMPANY_NAME = "Updated Corporation";
     private static final String UPDATED_EMAIL = "jane.smith@example.com";
 
-    private static Validator validator;
-
-    @BeforeAll
-    static void setUpValidator() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
-
     @Nested
     @DisplayName("Constructor Tests")
     class ConstructorTests {
@@ -46,7 +32,7 @@ class CustomerTest {
         void shouldCreateCustomerWithValidParameters() {
             Email email = new Email(VALID_EMAIL);
 
-            Customer customer = new Customer(VALID_USER_ID, VALID_COMPANY_NAME, email);
+            Customer customer = Customer.create(VALID_USER_ID, VALID_COMPANY_NAME, email);
 
             assertThat(customer).isNotNull();
             assertThat(customer.getId()).isNull();
@@ -55,20 +41,16 @@ class CustomerTest {
             assertThat(customer.getContactEmail()).isEqualTo(email);
             assertThat(customer.getCreatedAt()).isNotNull();
             assertThat(customer.getUpdatedAt()).isNotNull();
-
-            Set<ConstraintViolation<Customer>> violations = validator.validate(customer);
-            assertThat(violations).isEmpty();
         }
 
         @Test
-        @DisplayName("Should create customer with all fields using builder")
+        @DisplayName("Should create customer with all fields")
         void shouldCreateCustomerUsingBuilder() {
             CustomerId id = new CustomerId(UUID.randomUUID());
             Email email = new Email(VALID_EMAIL);
             LocalDateTime now = LocalDateTime.now();
 
-            Customer customer = Customer.builder().id(id).userId(VALID_USER_ID).companyName(VALID_COMPANY_NAME)
-                    .contactEmail(email).createdAt(now).updatedAt(now).build();
+            Customer customer = new Customer(id, VALID_USER_ID, VALID_COMPANY_NAME, email, now, now);
 
             assertThat(customer).isNotNull();
             assertThat(customer.getId()).isEqualTo(id);
@@ -77,9 +59,6 @@ class CustomerTest {
             assertThat(customer.getContactEmail()).isEqualTo(email);
             assertThat(customer.getCreatedAt()).isEqualTo(now);
             assertThat(customer.getUpdatedAt()).isEqualTo(now);
-
-            Set<ConstraintViolation<Customer>> violations = validator.validate(customer);
-            assertThat(violations).isEmpty();
         }
     }
 
@@ -91,7 +70,7 @@ class CustomerTest {
         @DisplayName("Should update informations with valid company name and contact email")
         void shouldUpdateInformationsWithValidData() {
             Email email = new Email(VALID_EMAIL);
-            Customer customer = new Customer(VALID_USER_ID, VALID_COMPANY_NAME, email);
+            Customer customer = Customer.create(VALID_USER_ID, VALID_COMPANY_NAME, email);
             LocalDateTime beforeUpdate = LocalDateTime.now();
 
             customer.updateInformation(UPDATED_COMPANY_NAME, new Email(UPDATED_EMAIL));
@@ -100,16 +79,13 @@ class CustomerTest {
             assertThat(customer.getContactEmail()).isEqualTo(new Email(UPDATED_EMAIL));
             assertThat(customer.getUpdatedAt()).isNotNull();
             assertThat(customer.getUpdatedAt()).isAfterOrEqualTo(beforeUpdate);
-
-            Set<ConstraintViolation<Customer>> violations = validator.validate(customer);
-            assertThat(violations).isEmpty();
         }
 
         @Test
         @DisplayName("Should update informations and set updatedAt timestamp")
         void shouldSetUpdatedAtTimestamp() {
             Email email = new Email(VALID_EMAIL);
-            Customer customer = new Customer(VALID_USER_ID, VALID_COMPANY_NAME, email);
+            Customer customer = Customer.create(VALID_USER_ID, VALID_COMPANY_NAME, email);
             LocalDateTime beforeUpdate = LocalDateTime.now();
 
             customer.updateInformation(UPDATED_COMPANY_NAME, new Email(UPDATED_EMAIL));
@@ -118,16 +94,13 @@ class CustomerTest {
             assertThat(customer.getContactEmail()).isEqualTo(new Email(UPDATED_EMAIL));
             assertThat(customer.getUpdatedAt()).isNotNull();
             assertThat(customer.getUpdatedAt()).isAfterOrEqualTo(beforeUpdate);
-
-            Set<ConstraintViolation<Customer>> violations = validator.validate(customer);
-            assertThat(violations).isEmpty();
         }
 
         @Test
         @DisplayName("Should update information multiple times with different timestamps")
         void shouldUpdateInformationMultipleTimes() throws InterruptedException {
             Email email = new Email(VALID_EMAIL);
-            Customer customer = new Customer(VALID_USER_ID, VALID_COMPANY_NAME, email);
+            Customer customer = Customer.create(VALID_USER_ID, VALID_COMPANY_NAME, email);
 
             customer.updateInformation("First Update Corp", new Email("first@example.com"));
             LocalDateTime firstUpdate = customer.getUpdatedAt();
@@ -146,12 +119,9 @@ class CustomerTest {
         @DisplayName("Should not fail validation when updating information with null company name")
         void shouldNotFailValidationWithNullCompanyName() {
             Email email = new Email(VALID_EMAIL);
-            Customer customer = new Customer(VALID_USER_ID, VALID_COMPANY_NAME, email);
+            Customer customer = Customer.create(VALID_USER_ID, VALID_COMPANY_NAME, email);
 
             customer.updateInformation(null, new Email(UPDATED_EMAIL));
-
-            Set<ConstraintViolation<Customer>> violations = validator.validate(customer);
-            assertThat(violations).isEmpty();
             assertThat(customer.getCompanyName()).isEqualTo(VALID_COMPANY_NAME);
             assertThat(customer.getContactEmail()).isEqualTo(new Email(UPDATED_EMAIL));
         }
@@ -160,12 +130,9 @@ class CustomerTest {
         @DisplayName("Should not fail validation when updating information with null contact email")
         void shouldNotFailValidationWithNullContactEmail() {
             Email email = new Email(VALID_EMAIL);
-            Customer customer = new Customer(VALID_USER_ID, VALID_COMPANY_NAME, email);
+            Customer customer = Customer.create(VALID_USER_ID, VALID_COMPANY_NAME, email);
 
             customer.updateInformation(UPDATED_COMPANY_NAME, null);
-
-            Set<ConstraintViolation<Customer>> violations = validator.validate(customer);
-            assertThat(violations).isEmpty();
             assertThat(customer.getCompanyName()).isEqualTo(UPDATED_COMPANY_NAME);
             assertThat(customer.getContactEmail()).isEqualTo(new Email(VALID_EMAIL));
         }
@@ -174,16 +141,13 @@ class CustomerTest {
         @DisplayName("Should update information with same values")
         void shouldUpdateInformationWithSameValues() {
             Email email = new Email(VALID_EMAIL);
-            Customer customer = new Customer(VALID_USER_ID, VALID_COMPANY_NAME, email);
+            Customer customer = Customer.create(VALID_USER_ID, VALID_COMPANY_NAME, email);
 
             customer.updateInformation(VALID_COMPANY_NAME, email);
 
             assertThat(customer.getCompanyName()).isEqualTo(VALID_COMPANY_NAME);
             assertThat(customer.getContactEmail()).isEqualTo(email);
             assertThat(customer.getUpdatedAt()).isNotNull();
-
-            Set<ConstraintViolation<Customer>> violations = validator.validate(customer);
-            assertThat(violations).isEmpty();
         }
     }
 
@@ -196,9 +160,8 @@ class CustomerTest {
         void shouldPreserveCreatedAtWhenUpdatingInformation() {
             LocalDateTime createdAt = LocalDateTime.now().minusDays(10);
             Email email = new Email(VALID_EMAIL);
-            Customer customer = Customer.builder().userId(VALID_USER_ID).companyName(VALID_COMPANY_NAME)
-                    .contactEmail(email).createdAt(createdAt).updatedAt(createdAt).build();
-
+            CustomerId id = new CustomerId(UUID.randomUUID());
+            Customer customer = new Customer(id, VALID_USER_ID, VALID_COMPANY_NAME, email, createdAt, createdAt);
             customer.updateInformation(UPDATED_COMPANY_NAME, new Email(UPDATED_EMAIL));
 
             assertThat(customer.getCreatedAt()).isEqualTo(createdAt);
@@ -209,9 +172,9 @@ class CustomerTest {
         void shouldUpdateUpdatedAtWhenUpdatingInformation() {
             LocalDateTime createdAt = LocalDateTime.now().minusDays(5);
             LocalDateTime oldUpdatedAt = LocalDateTime.now().minusDays(1);
+            CustomerId id = new CustomerId(UUID.randomUUID());
             Email email = new Email(VALID_EMAIL);
-            Customer customer = Customer.builder().userId(VALID_USER_ID).companyName(VALID_COMPANY_NAME)
-                    .contactEmail(email).createdAt(createdAt).updatedAt(oldUpdatedAt).build();
+            Customer customer = new Customer(id, VALID_USER_ID, VALID_COMPANY_NAME, email, createdAt, oldUpdatedAt);
 
             LocalDateTime beforeUpdate = LocalDateTime.now();
             customer.updateInformation(UPDATED_COMPANY_NAME, new Email(UPDATED_EMAIL));
@@ -233,8 +196,7 @@ class CustomerTest {
             Email email = new Email(VALID_EMAIL);
             LocalDateTime createdAt = LocalDateTime.now().minusDays(1);
 
-            Customer customer = Customer.builder().id(id).userId(VALID_USER_ID).companyName(VALID_COMPANY_NAME)
-                    .contactEmail(email).createdAt(createdAt).updatedAt(createdAt).build();
+            Customer customer = new Customer(id, VALID_USER_ID, VALID_COMPANY_NAME, email, createdAt, createdAt);
 
             customer.updateInformation(UPDATED_COMPANY_NAME, new Email(UPDATED_EMAIL));
 
@@ -252,7 +214,7 @@ class CustomerTest {
         void shouldVerifyCustomerBelongsToUser() {
             UserId userId = new UserId(UUID.randomUUID());
             Email email = new Email(VALID_EMAIL);
-            Customer customer = new Customer(userId, VALID_COMPANY_NAME, email);
+            Customer customer = Customer.create(userId, VALID_COMPANY_NAME, email);
 
             boolean belongsToUser = customer.belongsToUser(userId);
 
@@ -265,7 +227,7 @@ class CustomerTest {
             UserId userId = new UserId(UUID.randomUUID());
             UserId differentUserId = new UserId(UUID.randomUUID());
             Email email = new Email(VALID_EMAIL);
-            Customer customer = new Customer(userId, VALID_COMPANY_NAME, email);
+            Customer customer = Customer.create(userId, VALID_COMPANY_NAME, email);
 
             boolean belongsToUser = customer.belongsToUser(differentUserId);
 
@@ -277,7 +239,7 @@ class CustomerTest {
         void shouldReturnFalseWhenCheckingNullUserId() {
             UserId userId = new UserId(UUID.randomUUID());
             Email email = new Email(VALID_EMAIL);
-            Customer customer = new Customer(userId, VALID_COMPANY_NAME, email);
+            Customer customer = Customer.create(userId, VALID_COMPANY_NAME, email);
 
             boolean belongsToUser = customer.belongsToUser(null);
 
@@ -285,15 +247,11 @@ class CustomerTest {
         }
 
         @Test
-        @DisplayName("Should return false when customer has null user id")
-        void shouldReturnFalseWhenCustomerHasNullUserId() {
+        @DisplayName("Should throw exception when customer has null user id")
+        void shouldThrowExceptionWhenCustomerHasNullUserId() {
             Email email = new Email(VALID_EMAIL);
-            Customer customer = Customer.builder().userId(null).companyName(VALID_COMPANY_NAME).contactEmail(email)
-                    .build();
-
-            boolean belongsToUser = customer.belongsToUser(new UserId(UUID.randomUUID()));
-
-            assertThat(belongsToUser).isFalse();
+            assertThatThrownBy(() -> Customer.create(null, VALID_COMPANY_NAME, email))
+                    .isInstanceOf(NullPointerException.class).hasMessage("userId is marked non-null but is null");
         }
     }
 }

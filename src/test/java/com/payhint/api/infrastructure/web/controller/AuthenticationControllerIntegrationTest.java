@@ -1,8 +1,11 @@
 package com.payhint.api.infrastructure.web.controller;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Objects;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,8 +55,9 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("john.doe@example.com", "SecurePass123",
                                         "John", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isCreated()).andExpect(jsonPath("$.id").isNotEmpty())
                                         .andExpect(jsonPath("$.email").value("john.doe@example.com"))
                                         .andExpect(jsonPath("$.firstName").value("John"))
@@ -66,12 +70,14 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("invalid-email", "SecurePass123", "John",
                                         "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("email")))
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("email"))))
                                         .andExpect(jsonPath("$.instance").value("/api/auth/register"))
                                         .andExpect(jsonPath("$.timestamp").isNotEmpty());
                 }
@@ -81,12 +87,14 @@ class AuthenticationControllerIntegrationTest {
                 void shouldRejectBlankEmail() throws Exception {
                         RegisterUserRequest request = new RegisterUserRequest("", "SecurePass123", "John", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("email")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("email"))));
                 }
 
                 @Test
@@ -94,12 +102,14 @@ class AuthenticationControllerIntegrationTest {
                 void shouldRejectNullEmail() throws Exception {
                         RegisterUserRequest request = new RegisterUserRequest(null, "SecurePass123", "John", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("email")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("email"))));
                 }
 
                 @Test
@@ -108,12 +118,14 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("john.doe@example.com", "Short1", "John",
                                         "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("password")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("password"))));
                 }
 
                 @Test
@@ -123,12 +135,14 @@ class AuthenticationControllerIntegrationTest {
                                         "ThisPasswordIsWayTooLongAndExceedsTheMaximumLengthOf30Characters", "John",
                                         "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("password")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("password"))));
                 }
 
                 @Test
@@ -137,12 +151,14 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("john.doe@example.com", "", "John",
                                         "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("password")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("password"))));
                 }
 
                 @Test
@@ -151,12 +167,14 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("john.doe@example.com", null, "John",
                                         "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("password")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("password"))));
                 }
 
                 @Test
@@ -165,12 +183,14 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("john.doe@example.com", "SecurePass123",
                                         "", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("firstName")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("firstName"))));
                 }
 
                 @Test
@@ -179,12 +199,14 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("john.doe@example.com", "SecurePass123",
                                         null, "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("firstName")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("firstName"))));
                 }
 
                 @Test
@@ -193,12 +215,15 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("john.doe@example.com", "SecurePass123",
                                         "John", "");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("lastName")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(Objects.requireNonNull(Objects
+                                                                        .requireNonNull(containsString("lastName"))))));
                 }
 
                 @Test
@@ -207,20 +232,23 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("john.doe@example.com", "SecurePass123",
                                         "John", null);
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("lastName")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(Objects.requireNonNull(Objects
+                                                                        .requireNonNull(containsString("lastName"))))));
                 }
 
                 @Test
                 @DisplayName("Should reject registration with empty request body")
                 void shouldRejectEmptyRequestBody() throws Exception {
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content("{}")).andExpect(status().isBadRequest())
-                                        .andExpect(jsonPath("$.status").value(400))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON)).content("{}"))
+                                        .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"));
                 }
@@ -230,18 +258,22 @@ class AuthenticationControllerIntegrationTest {
                 void shouldRejectDuplicateEmail() throws Exception {
                         RegisterUserRequest firstRequest = new RegisterUserRequest("duplicate@example.com",
                                         "SecurePass123", "John", "Doe");
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(firstRequest)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(firstRequest))))
                                         .andExpect(status().isCreated());
 
                         RegisterUserRequest duplicateRequest = new RegisterUserRequest("duplicate@example.com",
                                         "AnotherPass123", "Jane", "Smith");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(duplicateRequest)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(
+                                                        objectMapper.writeValueAsString(duplicateRequest))))
                                         .andExpect(status().isConflict()).andExpect(jsonPath("$.status").value(409))
                                         .andExpect(jsonPath("$.title").value("Resource Already Exists"))
-                                        .andExpect(jsonPath("$.detail").value(containsString("already")));
+                                        .andExpect(jsonPath("$.detail")
+                                                        .value(Objects.requireNonNull(containsString("already"))));
                 }
 
                 @Test
@@ -249,8 +281,9 @@ class AuthenticationControllerIntegrationTest {
                 void shouldAcceptMinimumPasswordLength() throws Exception {
                         RegisterUserRequest request = new RegisterUserRequest("min.pass@example.com", "Pass1234",
                                         "John", "Doe");
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isCreated())
                                         .andExpect(jsonPath("$.email").value("min.pass@example.com"));
                 }
@@ -261,8 +294,9 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("max.pass@example.com",
                                         "ThisPasswordIsExactly30Chars!", "John", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isCreated())
                                         .andExpect(jsonPath("$.email").value("max.pass@example.com"));
                 }
@@ -273,8 +307,9 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("special@example.com", "SecurePass123",
                                         "Jean-Pierre", "O'Connor");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isCreated())
                                         .andExpect(jsonPath("$.firstName").value("Jean-Pierre"))
                                         .andExpect(jsonPath("$.lastName").value("O'Connor"));
@@ -290,8 +325,10 @@ class AuthenticationControllerIntegrationTest {
                                 RegisterUserRequest request = new RegisterUserRequest(validEmails[i], "SecurePass123",
                                                 "User" + i, "Test" + i);
 
-                                mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                                .content(objectMapper.writeValueAsString(request)))
+                                mockMvc.perform(post("/api/auth/register")
+                                                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                                .content(Objects.requireNonNull(
+                                                                objectMapper.writeValueAsString(request))))
                                                 .andExpect(status().isCreated())
                                                 .andExpect(jsonPath("$.email").value(validEmails[i]));
                         }
@@ -303,12 +340,14 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("whitespace@example.com", "SecurePass123",
                                         "   ", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("firstName")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("firstName"))));
                 }
 
                 @Test
@@ -317,12 +356,15 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("whitespace2@example.com",
                                         "SecurePass123", "John", "   ");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("lastName")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(Objects.requireNonNull(Objects
+                                                                        .requireNonNull(containsString("lastName"))))));
                 }
 
                 @Test
@@ -331,12 +373,14 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("whitespace3@example.com", "        ",
                                         "John", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("password")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("password"))));
                 }
         }
 
@@ -350,14 +394,17 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest registerRequest = new RegisterUserRequest("login.test@example.com",
                                         "SecurePass123", "John", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(registerRequest)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(
+                                                        objectMapper.writeValueAsString(registerRequest))))
                                         .andExpect(status().isCreated());
 
                         LoginUserRequest loginRequest = new LoginUserRequest("login.test@example.com", "SecurePass123");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isOk()).andExpect(jsonPath("$.token").isNotEmpty())
                                         .andExpect(jsonPath("$.token").isString());
                 }
@@ -368,15 +415,18 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest registerRequest = new RegisterUserRequest("wrong.pass@example.com",
                                         "CorrectPass123", "John", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(registerRequest)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(
+                                                        objectMapper.writeValueAsString(registerRequest))))
                                         .andExpect(status().isCreated());
 
                         LoginUserRequest loginRequest = new LoginUserRequest("wrong.pass@example.com",
                                         "WrongPassword123");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isUnauthorized()).andExpect(jsonPath("$.status").value(401))
                                         .andExpect(jsonPath("$.title").value("Authentication Failed"))
                                         .andExpect(jsonPath("$.detail").value("Invalid email or password"))
@@ -390,8 +440,9 @@ class AuthenticationControllerIntegrationTest {
                         LoginUserRequest loginRequest = new LoginUserRequest("nonexistent@example.com",
                                         "SomePassword123");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isUnauthorized()).andExpect(jsonPath("$.status").value(401))
                                         .andExpect(jsonPath("$.title").value("Authentication Failed"))
                                         .andExpect(jsonPath("$.detail").value("Invalid email or password"));
@@ -402,12 +453,14 @@ class AuthenticationControllerIntegrationTest {
                 void shouldRejectBlankEmail() throws Exception {
                         LoginUserRequest loginRequest = new LoginUserRequest("", "SecurePass123");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("email")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("email"))));
                 }
 
                 @Test
@@ -415,12 +468,14 @@ class AuthenticationControllerIntegrationTest {
                 void shouldRejectNullEmail() throws Exception {
                         LoginUserRequest loginRequest = new LoginUserRequest(null, "SecurePass123");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("email")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("email"))));
                 }
 
                 @Test
@@ -428,12 +483,14 @@ class AuthenticationControllerIntegrationTest {
                 void shouldRejectInvalidEmailFormat() throws Exception {
                         LoginUserRequest loginRequest = new LoginUserRequest("not-an-email", "SecurePass123");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("email")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("email"))));
                 }
 
                 @Test
@@ -441,12 +498,14 @@ class AuthenticationControllerIntegrationTest {
                 void shouldRejectBlankPassword() throws Exception {
                         LoginUserRequest loginRequest = new LoginUserRequest("test@example.com", "");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("password")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("password"))));
                 }
 
                 @Test
@@ -454,12 +513,14 @@ class AuthenticationControllerIntegrationTest {
                 void shouldRejectNullPassword() throws Exception {
                         LoginUserRequest loginRequest = new LoginUserRequest("test@example.com", null);
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("password")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("password"))));
                 }
 
                 @Test
@@ -467,12 +528,14 @@ class AuthenticationControllerIntegrationTest {
                 void shouldRejectShortPassword() throws Exception {
                         LoginUserRequest loginRequest = new LoginUserRequest("test@example.com", "Short1");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("password")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("password"))));
                 }
 
                 @Test
@@ -481,18 +544,21 @@ class AuthenticationControllerIntegrationTest {
                         LoginUserRequest loginRequest = new LoginUserRequest("test@example.com",
                                         "ThisPasswordIsWayTooLongAndExceedsTheMaximumLengthOf30Characters");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("password")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("password"))));
                 }
 
                 @Test
                 @DisplayName("Should reject login with empty request body")
                 void shouldRejectEmptyRequestBody() throws Exception {
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON).content("{}"))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON)).content("{}"))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"));
@@ -503,12 +569,14 @@ class AuthenticationControllerIntegrationTest {
                 void shouldRejectWhitespaceOnlyEmail() throws Exception {
                         LoginUserRequest loginRequest = new LoginUserRequest("   ", "SecurePass123");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("email")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("email"))));
                 }
 
                 @Test
@@ -516,12 +584,14 @@ class AuthenticationControllerIntegrationTest {
                 void shouldRejectWhitespaceOnlyPassword() throws Exception {
                         LoginUserRequest loginRequest = new LoginUserRequest("test@example.com", "        ");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                                         .andExpect(jsonPath("$.title").value("Invalid Input"))
                                         .andExpect(jsonPath("$.detail").value("Validation failed"))
-                                        .andExpect(jsonPath("$.errors").value(containsString("password")));
+                                        .andExpect(jsonPath("$.errors")
+                                                        .value(Objects.requireNonNull(containsString("password"))));
                 }
 
                 @Test
@@ -530,15 +600,18 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest registerRequest = new RegisterUserRequest("CaseSensitive@Example.COM",
                                         "SecurePass123", "John", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(registerRequest)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(
+                                                        objectMapper.writeValueAsString(registerRequest))))
                                         .andExpect(status().isCreated());
 
                         LoginUserRequest loginRequest = new LoginUserRequest("CaseSensitive@Example.COM",
                                         "SecurePass123");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isOk()).andExpect(jsonPath("$.token").isNotEmpty());
                 }
 
@@ -548,24 +621,30 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest registerRequest = new RegisterUserRequest("multi.login@example.com",
                                         "SecurePass123", "John", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(registerRequest)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(
+                                                        objectMapper.writeValueAsString(registerRequest))))
                                         .andExpect(status().isCreated());
 
                         LoginUserRequest loginRequest = new LoginUserRequest("multi.login@example.com",
                                         "SecurePass123");
 
                         String firstToken = mockMvc
-                                        .perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                                        .perform(post("/api/auth/login")
+                                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                                        .content(Objects.requireNonNull(
+                                                                        objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isOk()).andExpect(jsonPath("$.token").isNotEmpty())
                                         .andReturn().getResponse().getContentAsString();
 
                         Thread.sleep(1000);
 
                         String secondToken = mockMvc
-                                        .perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                                        .perform(post("/api/auth/login")
+                                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                                        .content(Objects.requireNonNull(
+                                                                        objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isOk()).andExpect(jsonPath("$.token").isNotEmpty())
                                         .andReturn().getResponse().getContentAsString();
 
@@ -578,14 +657,17 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest registerRequest = new RegisterUserRequest("min.login@example.com",
                                         "Pass1234", "John", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(registerRequest)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(
+                                                        objectMapper.writeValueAsString(registerRequest))))
                                         .andExpect(status().isCreated());
 
                         LoginUserRequest loginRequest = new LoginUserRequest("min.login@example.com", "Pass1234");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isOk()).andExpect(jsonPath("$.token").isNotEmpty());
                 }
 
@@ -595,15 +677,18 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest registerRequest = new RegisterUserRequest("max.login@example.com",
                                         "ThisPasswordIsExactly30Chars!", "John", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(registerRequest)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(
+                                                        objectMapper.writeValueAsString(registerRequest))))
                                         .andExpect(status().isCreated());
 
                         LoginUserRequest loginRequest = new LoginUserRequest("max.login@example.com",
                                         "ThisPasswordIsExactly30Chars!");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isOk()).andExpect(jsonPath("$.token").isNotEmpty());
                 }
         }
@@ -618,8 +703,9 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest request = new RegisterUserRequest("public.access@example.com",
                                         "SecurePass123", "John", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(request)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                                         .andExpect(status().isCreated());
                 }
 
@@ -629,15 +715,18 @@ class AuthenticationControllerIntegrationTest {
                         RegisterUserRequest registerRequest = new RegisterUserRequest("public.login@example.com",
                                         "SecurePass123", "John", "Doe");
 
-                        mockMvc.perform(post("/api/auth/register").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(registerRequest)))
+                        mockMvc.perform(post("/api/auth/register")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(
+                                                        objectMapper.writeValueAsString(registerRequest))))
                                         .andExpect(status().isCreated());
 
                         LoginUserRequest loginRequest = new LoginUserRequest("public.login@example.com",
                                         "SecurePass123");
 
-                        mockMvc.perform(post("/api/auth/login").contentType(MediaType.APPLICATION_JSON)
-                                        .content(objectMapper.writeValueAsString(loginRequest)))
+                        mockMvc.perform(post("/api/auth/login")
+                                        .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
+                                        .content(Objects.requireNonNull(objectMapper.writeValueAsString(loginRequest))))
                                         .andExpect(status().isOk());
                 }
         }
