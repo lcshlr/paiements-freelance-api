@@ -1,4 +1,4 @@
-package com.payhint.api.domain.shared.exception;
+package com.payhint.api.domain.shared.exceptions;
 
 public abstract class DomainException extends RuntimeException {
     protected DomainException(String message) {

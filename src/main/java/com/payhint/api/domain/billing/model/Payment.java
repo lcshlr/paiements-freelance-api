@@ -1,12 +1,12 @@
 package com.payhint.api.domain.billing.model;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
+import com.payhint.api.domain.billing.valueobjects.InstallmentId;
+import com.payhint.api.domain.billing.valueobjects.Money;
+import com.payhint.api.domain.billing.valueobjects.PaymentId;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,24 +16,21 @@ import lombok.Getter;
 @AllArgsConstructor
 public class Payment {
 
-    private UUID id;
-    @NotBlank
-    private UUID installmentId;
-    @NotBlank
-    @Positive
-    private BigDecimal amount;
-    @NotBlank
+    private PaymentId id;
+    private InstallmentId installmentId;
+    private Money amount;
     private LocalDate paymentDate;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Payment(UUID installmentId, BigDecimal amount, LocalDate paymentDate) {
+    public Payment(InstallmentId installmentId, Money amount, LocalDate paymentDate) {
         this.installmentId = installmentId;
         this.amount = amount;
         this.paymentDate = paymentDate;
+        this.createdAt = LocalDateTime.now();
     }
 
-    public void updateDetails(BigDecimal amount, LocalDate paymentDate) {
+    public void updateDetails(Money amount, LocalDate paymentDate) {
         this.amount = amount;
         this.paymentDate = paymentDate;
         this.updatedAt = LocalDateTime.now();

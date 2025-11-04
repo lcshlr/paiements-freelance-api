@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import com.payhint.api.domain.crm.valueobjects.Email;
 import com.payhint.api.domain.crm.valueobjects.UserId;
-import com.payhint.api.domain.shared.exception.InvalidPropertyException;
+import com.payhint.api.domain.shared.exceptions.InvalidPropertyException;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

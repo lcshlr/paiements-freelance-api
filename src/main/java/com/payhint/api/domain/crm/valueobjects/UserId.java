@@ -2,25 +2,16 @@ package com.payhint.api.domain.crm.valueobjects;
 
 import java.util.UUID;
 
-import com.payhint.api.domain.shared.exception.InvalidPropertyException;
+import com.payhint.api.domain.shared.valueobjects.EntityId;
 
-public record UserId(UUID value) {
+public record UserId(UUID value) implements EntityId {
 
     public UserId {
-        if (value == null) {
-            throw new InvalidPropertyException("UserId cannot be null");
-        }
+        validateNotNull(value);
     }
 
     public static UserId fromString(String id) {
-        if (id == null) {
-            throw new InvalidPropertyException("Invalid UserId format: null");
-        }
-        try {
-            return new UserId(UUID.fromString(id));
-        } catch (IllegalArgumentException e) {
-            throw new InvalidPropertyException("Invalid UserId format: " + id);
-        }
+        return new UserId(EntityId.parseUUID(id));
     }
 
     @Override

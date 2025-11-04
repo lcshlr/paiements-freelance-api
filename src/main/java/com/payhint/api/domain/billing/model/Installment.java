@@ -4,10 +4,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
+import com.payhint.api.domain.billing.valueobjects.InstallmentId;
+import com.payhint.api.domain.billing.valueobjects.InvoiceId;
+import com.payhint.api.domain.billing.valueobjects.Money;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,15 +18,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public class Installment {
 
-    private UUID id;
-    @NotBlank
-    private UUID invoiceId;
-    @NotBlank
-    @Positive
-    private BigDecimal amountDue;
+    private InstallmentId id;
+    private InvoiceId invoiceId;
+    private Money amountDue;
     @Builder.Default
-    private BigDecimal amountPaid = BigDecimal.ZERO;
-    @NotBlank
+    private Money amountPaid = Money.ZERO;
     private LocalDate dueDate;
     @Builder.Default
     private PaymentStatus status = PaymentStatus.PENDING;
@@ -33,7 +30,7 @@ public class Installment {
     @Builder.Default
     private List<Payment> payments = new ArrayList<>();
 
-    public Installment(UUID invoiceId, BigDecimal amountDue, LocalDate dueDate) {
+    public Installment(InvoiceId invoiceId, Money amountDue, LocalDate dueDate) {
         this.invoiceId = invoiceId;
         this.amountDue = amountDue;
         this.dueDate = dueDate;
@@ -48,7 +45,7 @@ public class Installment {
                 && (status == PaymentStatus.PENDING || status == PaymentStatus.PARTIALLY_PAID);
     }
 
-    public BigDecimal getRemainingAmount() {
+    public Money getRemainingAmount() {
         return amountDue.subtract(amountPaid);
     }
 
@@ -62,8 +59,8 @@ public class Installment {
     }
 
     private void updatePaymentStatus() {
-        BigDecimal remaining = getRemainingAmount();
-        if (remaining.compareTo(BigDecimal.ZERO) == 0) {
+        Money remaining = getRemainingAmount();
+        if (remaining.amount().compareTo(BigDecimal.ZERO) == 0) {
             updateStatus(PaymentStatus.PAID);
         } else if (remaining.compareTo(amountDue) < 0) {
             updateStatus(PaymentStatus.PARTIALLY_PAID);

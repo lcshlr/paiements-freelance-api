@@ -20,7 +20,7 @@ public interface ValueObjectMapper {
     }
 
     default String map(CustomerId customerId) {
-        return customerId == null ? null : customerId.toString();
+        return customerId == null ? null : customerId.value().toString();
     }
 
     default CustomerId mapToCustomerId(String id) {
@@ -28,7 +28,7 @@ public interface ValueObjectMapper {
     }
 
     default String map(UserId userId) {
-        return userId == null ? null : userId.toString();
+        return userId == null ? null : userId.value().toString();
     }
 
     default UserId mapToUserId(String id) {

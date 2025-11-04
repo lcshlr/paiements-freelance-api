@@ -2,7 +2,7 @@ package com.payhint.api.domain.crm.valueobjects;
 
 import java.util.regex.Pattern;
 
-import com.payhint.api.domain.shared.exception.InvalidPropertyException;
+import com.payhint.api.domain.shared.exceptions.InvalidPropertyException;
 
 public record Email(String value) {
 

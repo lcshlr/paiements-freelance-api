@@ -13,12 +13,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.payhint.api.application.shared.exceptions.AlreadyExistsException;
 import com.payhint.api.application.shared.exceptions.NotFoundException;
 import com.payhint.api.application.shared.exceptions.PermissionDeniedException;
-import com.payhint.api.domain.shared.exception.DomainException;
+import com.payhint.api.domain.shared.exceptions.DomainException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
