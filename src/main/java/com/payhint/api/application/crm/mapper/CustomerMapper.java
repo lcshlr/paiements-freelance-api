@@ -18,7 +18,6 @@ public interface CustomerMapper {
     List<CustomerResponse> toResponseList(List<Customer> customers);
 
     @Mapping(source = "contactEmail", target = "contactEmail")
-    @Mapping(source = "userId", target = "userId")
     @Mapping(source = "id", target = "id")
     CustomerResponse toResponse(Customer customer);
 

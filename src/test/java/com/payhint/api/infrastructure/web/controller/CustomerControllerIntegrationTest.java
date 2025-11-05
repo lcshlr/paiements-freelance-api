@@ -101,7 +101,6 @@ class CustomerControllerIntegrationTest {
                     .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                     .content(Objects.requireNonNull(objectMapper.writeValueAsString(request))))
                     .andExpect(status().isCreated()).andExpect(jsonPath("$.id").isNotEmpty())
-                    .andExpect(jsonPath("$.userId").value(testUser.getId().toString()))
                     .andExpect(jsonPath("$.companyName").value(TEST_COMPANY_NAME))
                     .andExpect(jsonPath("$.contactEmail").value(TEST_CONTACT_EMAIL));
         }
@@ -117,7 +116,7 @@ class CustomerControllerIntegrationTest {
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
-                    .andExpect(jsonPath("$.errors").value(containsString("companyName")))
+                    .andExpect(jsonPath("$.errors").value(Objects.requireNonNull(containsString("companyName"))))
                     .andExpect(jsonPath("$.instance").value("/api/customers"))
                     .andExpect(jsonPath("$.timestamp").isNotEmpty());
         }
@@ -133,7 +132,7 @@ class CustomerControllerIntegrationTest {
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
-                    .andExpect(jsonPath("$.errors").value(containsString("companyName")));
+                    .andExpect(jsonPath("$.errors").value(Objects.requireNonNull(containsString("companyName"))));
         }
 
         @Test
@@ -148,7 +147,7 @@ class CustomerControllerIntegrationTest {
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
-                    .andExpect(jsonPath("$.errors").value(containsString("companyName")));
+                    .andExpect(jsonPath("$.errors").value(Objects.requireNonNull(containsString("companyName"))));
         }
 
         @Test
@@ -162,7 +161,7 @@ class CustomerControllerIntegrationTest {
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
-                    .andExpect(jsonPath("$.errors").value(containsString("contactEmail")));
+                    .andExpect(jsonPath("$.errors").value(Objects.requireNonNull(containsString("contactEmail"))));
         }
 
         @Test
@@ -176,7 +175,7 @@ class CustomerControllerIntegrationTest {
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
-                    .andExpect(jsonPath("$.errors").value(containsString("contactEmail")));
+                    .andExpect(jsonPath("$.errors").value(Objects.requireNonNull(containsString("contactEmail"))));
         }
 
         @Test
@@ -190,7 +189,7 @@ class CustomerControllerIntegrationTest {
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
-                    .andExpect(jsonPath("$.errors").value(containsString("contactEmail")));
+                    .andExpect(jsonPath("$.errors").value(Objects.requireNonNull(containsString("contactEmail"))));
         }
 
         @Test
@@ -205,7 +204,7 @@ class CustomerControllerIntegrationTest {
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
-                    .andExpect(jsonPath("$.errors").value(containsString("contactEmail")));
+                    .andExpect(jsonPath("$.errors").value(Objects.requireNonNull(containsString("contactEmail"))));
         }
 
         @Test
@@ -253,7 +252,6 @@ class CustomerControllerIntegrationTest {
 
             mockMvc.perform(get("/api/customers/{id}", customer.getId()).header("Authorization", "Bearer " + jwtToken))
                     .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(customer.getId().toString()))
-                    .andExpect(jsonPath("$.userId").value(testUser.getId().toString()))
                     .andExpect(jsonPath("$.companyName").value(TEST_COMPANY_NAME))
                     .andExpect(jsonPath("$.contactEmail").value(TEST_CONTACT_EMAIL));
         }
@@ -330,9 +328,10 @@ class CustomerControllerIntegrationTest {
             mockMvc.perform(get("/api/customers").header("Authorization", "Bearer " + jwtToken))
                     .andExpect(status().isOk()).andExpect(jsonPath("$").isArray())
                     .andExpect(jsonPath("$.length()").value(2))
-                    .andExpect(jsonPath("$[*].companyName", containsInAnyOrder("Company A", "Company B")))
-                    .andExpect(jsonPath("$[*].contactEmail",
-                            containsInAnyOrder("contact@companya.com", "contact@companyb.com")));
+                    .andExpect(jsonPath("$[*].companyName",
+                            Objects.requireNonNull(containsInAnyOrder("Company A", "Company B"))))
+                    .andExpect(jsonPath("$[*].contactEmail", Objects
+                            .requireNonNull(containsInAnyOrder("contact@companya.com", "contact@companyb.com"))));
         }
 
         @Test
@@ -494,7 +493,7 @@ class CustomerControllerIntegrationTest {
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
-                    .andExpect(jsonPath("$.errors").value(containsString("companyName")));
+                    .andExpect(jsonPath("$.errors").value(Objects.requireNonNull(containsString("companyName"))));
         }
 
         @Test
@@ -511,7 +510,7 @@ class CustomerControllerIntegrationTest {
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
-                    .andExpect(jsonPath("$.errors").value(containsString("contactEmail")));
+                    .andExpect(jsonPath("$.errors").value(Objects.requireNonNull(containsString("contactEmail"))));
         }
 
         @Test
@@ -529,7 +528,7 @@ class CustomerControllerIntegrationTest {
                     .andExpect(status().isBadRequest()).andExpect(jsonPath("$.status").value(400))
                     .andExpect(jsonPath("$.title").value("Invalid Input"))
                     .andExpect(jsonPath("$.detail").value("Validation failed"))
-                    .andExpect(jsonPath("$.errors").value(containsString("contactEmail")));
+                    .andExpect(jsonPath("$.errors").value(Objects.requireNonNull(containsString("contactEmail"))));
         }
 
         @Test

@@ -30,7 +30,6 @@ import com.payhint.api.domain.crm.valueobject.Email;
 import com.payhint.api.domain.crm.valueobject.UserId;
 import com.payhint.api.infrastructure.security.JwtTokenProvider;
 
-import jakarta.validation.ConstraintViolationException;
 
 @SpringBootTest
 @TestPropertySource(properties = { "spring.datasource.url=jdbc:h2:mem:testdb",
@@ -116,7 +115,7 @@ class AuthenticationServiceIntegrationTest {
 
             assertThatThrownBy(() -> authenticationService.register(duplicateRequest))
                     .isInstanceOf(AlreadyExistsException.class)
-                    .hasMessageContaining("User with email " + TEST_EMAIL + " already exists.");
+                    .hasMessageContaining("User with email " + TEST_EMAIL + " already exists");
         }
 
         @Test
@@ -302,8 +301,7 @@ class AuthenticationServiceIntegrationTest {
         void shouldThrowExceptionWhenEmptyPassword() {
             LoginUserRequest request = new LoginUserRequest(TEST_EMAIL, "");
 
-            assertThatThrownBy(() -> authenticationService.login(request))
-                    .isInstanceOf(ConstraintViolationException.class);
+            assertThatThrownBy(() -> authenticationService.login(request)).isInstanceOf(BadCredentialsException.class);
         }
 
         @Test
@@ -351,8 +349,7 @@ class AuthenticationServiceIntegrationTest {
         void shouldHandleEmailWithWhitespace() {
             LoginUserRequest request = new LoginUserRequest("  " + TEST_EMAIL + "  ", TEST_PASSWORD);
 
-            assertThatThrownBy(() -> authenticationService.login(request))
-                    .isInstanceOf(ConstraintViolationException.class);
+            assertThatThrownBy(() -> authenticationService.login(request)).isInstanceOf(BadCredentialsException.class);
         }
     }
 

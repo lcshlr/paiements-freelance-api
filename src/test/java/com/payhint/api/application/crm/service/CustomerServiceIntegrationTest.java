@@ -1,6 +1,7 @@
 package com.payhint.api.application.crm.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.List;
 import java.util.UUID;
@@ -102,7 +103,8 @@ class CustomerServiceIntegrationTest {
             CreateCustomerRequest request = new CreateCustomerRequest(TEST_COMPANY_NAME, TEST_CONTACT_EMAIL);
 
             assertThatThrownBy(() -> customerService.createCustomer(new UserId(nonExistentUserId), request))
-                    .isInstanceOf(NotFoundException.class).hasMessageContaining("User does not exist.");
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessageContaining("User with ID " + nonExistentUserId + " does not exist");
         }
 
         @Test
@@ -115,7 +117,7 @@ class CustomerServiceIntegrationTest {
 
             assertThatThrownBy(() -> customerService.createCustomer(testUserId, duplicateRequest))
                     .isInstanceOf(AlreadyExistsException.class)
-                    .hasMessageContaining("A customer with the same company name already exists for this user.");
+                    .hasMessageContaining("A customer with the same company name already exists for this user");
         }
 
         @Test
@@ -256,7 +258,8 @@ class CustomerServiceIntegrationTest {
 
             assertThatThrownBy(() -> customerService.updateCustomerDetails(new UserId(nonExistentUserId),
                     new CustomerId(UUID.fromString(existingCustomer.getId().toString())), request))
-                            .isInstanceOf(NotFoundException.class).hasMessageContaining("User does not exist.");
+                            .isInstanceOf(NotFoundException.class)
+                            .hasMessageContaining("User with ID " + nonExistentUserId + " does not exist");
         }
 
         @Test
@@ -268,8 +271,11 @@ class CustomerServiceIntegrationTest {
             UpdateCustomerRequest request = new UpdateCustomerRequest("New Name", null);
 
             assertThatThrownBy(() -> customerService.updateCustomerDetails(savedAnotherUser.getId(),
-                    existingCustomer.getId(), request)).isInstanceOf(PermissionDeniedException.class)
-                            .hasMessageContaining("User does not have permission to access this customer.");
+                    existingCustomer.getId(), request))
+                            .isInstanceOf(PermissionDeniedException.class)
+                            .hasMessageContaining("User with ID " + savedAnotherUser.getId()
+                                    + " does not have permission to access customer with ID "
+                                    + existingCustomer.getId());
 
             userRepository.delete(savedAnotherUser);
         }
@@ -324,7 +330,8 @@ class CustomerServiceIntegrationTest {
 
             assertThatThrownBy(
                     () -> customerService.deleteCustomer(new UserId(nonExistentUserId), existingCustomer.getId()))
-                            .isInstanceOf(NotFoundException.class).hasMessageContaining("User does not exist.");
+                            .isInstanceOf(NotFoundException.class)
+                            .hasMessageContaining("User with ID " + nonExistentUserId + " does not exist");
         }
 
         @Test
@@ -335,7 +342,8 @@ class CustomerServiceIntegrationTest {
 
             assertThatThrownBy(() -> customerService.deleteCustomer(savedAnotherUser.getId(), existingCustomer.getId()))
                     .isInstanceOf(PermissionDeniedException.class)
-                    .hasMessageContaining("User does not have permission to access this customer.");
+                    .hasMessageContaining("User with ID " + savedAnotherUser.getId()
+                            + " does not have permission to access customer with ID " + existingCustomer.getId());
 
             assertThat(customerRepository.findById(existingCustomer.getId())).isPresent();
 
@@ -395,7 +403,8 @@ class CustomerServiceIntegrationTest {
 
             assertThatThrownBy(
                     () -> customerService.viewCustomerProfile(new UserId(nonExistentUserId), existingCustomer.getId()))
-                            .isInstanceOf(NotFoundException.class).hasMessageContaining("User does not exist.");
+                            .isInstanceOf(NotFoundException.class)
+                            .hasMessageContaining("User with ID " + nonExistentUserId + " does not exist");
         }
 
         @Test
@@ -407,7 +416,9 @@ class CustomerServiceIntegrationTest {
             assertThatThrownBy(
                     () -> customerService.viewCustomerProfile(savedAnotherUser.getId(), existingCustomer.getId()))
                             .isInstanceOf(PermissionDeniedException.class)
-                            .hasMessageContaining("User does not have permission to access this customer.");
+                            .hasMessageContaining("User with ID " + savedAnotherUser.getId()
+                                    + " does not have permission to access customer with ID "
+                                    + existingCustomer.getId());
 
             userRepository.delete(savedAnotherUser);
         }
@@ -484,7 +495,8 @@ class CustomerServiceIntegrationTest {
             UUID nonExistentUserId = UUID.randomUUID();
 
             assertThatThrownBy(() -> customerService.listAllCustomers(new UserId(nonExistentUserId)))
-                    .isInstanceOf(NotFoundException.class).hasMessageContaining("User does not exist.");
+                    .isInstanceOf(NotFoundException.class)
+                    .hasMessageContaining("User with ID " + nonExistentUserId + " does not exist");
         }
 
         @Test
@@ -540,16 +552,6 @@ class CustomerServiceIntegrationTest {
         void shouldHandleNullCustomerIdGracefully() {
             assertThatThrownBy(() -> customerService.viewCustomerProfile(testUserId, null))
                     .isInstanceOf(Exception.class);
-        }
-
-        @Test
-        @DisplayName("Should throw error for very long company name")
-        void shouldThrowErrorForVeryLongCompanyName() {
-            String longCompanyName = "A".repeat(500);
-            CreateCustomerRequest request = new CreateCustomerRequest(longCompanyName, TEST_CONTACT_EMAIL);
-
-            assertThatThrownBy(() -> customerService.createCustomer(testUserId, request)).isInstanceOf(Exception.class)
-                    .hasMessageContaining("companyName");
         }
 
         @Test

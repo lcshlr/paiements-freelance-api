@@ -263,7 +263,7 @@ class UserTest {
             assertThat(user.getFirstName()).isEqualTo(VALID_FIRST_NAME);
             assertThat(user.getLastName()).isEqualTo(VALID_LAST_NAME);
             assertThat(user.getCreatedAt()).isEqualTo(createdAt);
-            assertThat(user.getUpdatedAt()).isEqualTo(updatedAt);
+            assertThat(user.getUpdatedAt()).isAfter(updatedAt);
 
             assertThat(user.getPassword()).isEqualTo(newPassword);
         }

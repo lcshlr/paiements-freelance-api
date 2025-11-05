@@ -2,8 +2,9 @@ package com.payhint.api.application.crm.service;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import com.payhint.api.application.crm.dto.request.CreateCustomerRequest;
 import com.payhint.api.application.crm.dto.request.UpdateCustomerRequest;
@@ -21,12 +22,12 @@ import com.payhint.api.domain.crm.valueobject.Email;
 import com.payhint.api.domain.crm.valueobject.UserId;
 
 @Service
-@Validated
 public class CustomerService implements CustomerManagementUseCase {
 
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
     private final CustomerMapper customerMapper;
+    private static final Logger logger = LoggerFactory.getLogger(CustomerService.class);
 
     public CustomerService(CustomerRepository customerRepository, UserRepository userRepository,
             CustomerMapper customerMapper) {
@@ -37,14 +38,22 @@ public class CustomerService implements CustomerManagementUseCase {
 
     private Customer findCustomerForUser(UserId userId, CustomerId customerId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("User does not exist.");
+            var errorMessage = "User with ID " + userId + " does not exist";
+            logger.warn(errorMessage);
+            throw new NotFoundException(errorMessage);
         }
 
-        Customer existingCustomer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new NotFoundException("Customer not found."));
+        Customer existingCustomer = customerRepository.findById(customerId).orElseThrow(() -> {
+            var errorMessage = "Customer not found.";
+            logger.warn(errorMessage);
+            return new NotFoundException(errorMessage);
+        });
 
         if (!existingCustomer.belongsToUser(userId)) {
-            throw new PermissionDeniedException("User does not have permission to access this customer.");
+            var errorMessage = "User with ID " + userId + " does not have permission to access customer with ID "
+                    + customerId;
+            logger.warn(errorMessage);
+            throw new PermissionDeniedException(errorMessage);
         }
         return existingCustomer;
     }
@@ -52,14 +61,19 @@ public class CustomerService implements CustomerManagementUseCase {
     @Override
     public CustomerResponse createCustomer(UserId userId, CreateCustomerRequest request) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("User does not exist.");
+            var errorMessage = "User with ID " + userId + " does not exist";
+            logger.warn(errorMessage);
+            throw new NotFoundException(errorMessage);
         }
         if (customerRepository.existsByUserIdAndCompanyName(userId, request.companyName())) {
-            throw new AlreadyExistsException("A customer with the same company name already exists for this user.");
+            var errorMessage = "A customer with the same company name already exists for this user";
+            logger.warn(errorMessage);
+            throw new AlreadyExistsException(errorMessage);
         }
 
         Customer customer = Customer.create(userId, request.companyName(), new Email(request.contactEmail()));
         Customer savedCustomer = customerRepository.save(customer);
+        logger.info("Customer created successfully: " + savedCustomer.getCompanyName() + " for user ID " + userId);
         return customerMapper.toResponse(savedCustomer);
     }
 
@@ -69,13 +83,16 @@ public class CustomerService implements CustomerManagementUseCase {
 
         var contactEmail = request.contactEmail() == null ? null : new Email(request.contactEmail());
         existingCustomer.updateInformation(request.companyName(), contactEmail);
-        return customerMapper.toResponse(customerRepository.save(existingCustomer));
+        Customer savedCustomer = customerRepository.save(existingCustomer);
+        logger.info("Customer updated successfully: " + existingCustomer.getCompanyName() + " for user ID " + userId);
+        return customerMapper.toResponse(savedCustomer);
     }
 
     @Override
     public void deleteCustomer(UserId userId, CustomerId customerId) {
         Customer existingCustomer = findCustomerForUser(userId, customerId);
         customerRepository.delete(existingCustomer);
+        logger.info("Customer deleted successfully: " + existingCustomer.getCompanyName() + " for user ID " + userId);
     }
 
     @Override
@@ -87,7 +104,9 @@ public class CustomerService implements CustomerManagementUseCase {
     @Override
     public List<CustomerResponse> listAllCustomers(UserId userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("User does not exist.");
+            var errorMessage = "User with ID " + userId + " does not exist";
+            logger.warn(errorMessage);
+            throw new NotFoundException(errorMessage);
         }
         List<Customer> customers = customerRepository.findAllByUserId(userId);
         return customerMapper.toResponseList(customers);

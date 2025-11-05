@@ -1,12 +1,13 @@
 package com.payhint.api.application.crm.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import com.payhint.api.application.crm.dto.request.LoginUserRequest;
 import com.payhint.api.application.crm.dto.request.RegisterUserRequest;
@@ -21,7 +22,6 @@ import com.payhint.api.domain.crm.valueobject.Email;
 import com.payhint.api.infrastructure.security.JwtTokenProvider;
 
 @Service
-@Validated
 public class AuthenticationService implements AuthenticationUseCase {
 
     private final UserRepository userRepository;
@@ -29,6 +29,7 @@ public class AuthenticationService implements AuthenticationUseCase {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     public AuthenticationService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder,
             AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider) {
@@ -43,12 +44,15 @@ public class AuthenticationService implements AuthenticationUseCase {
     public UserResponse register(RegisterUserRequest request) {
         Email email = request.email() == null ? null : new Email(request.email());
         userRepository.findByEmail(email).ifPresent(user -> {
-            throw new AlreadyExistsException("User with email " + email + " already exists.");
+            var errorMessage = "User with email " + email + " already exists";
+            logger.warn(errorMessage);
+            throw new AlreadyExistsException(errorMessage);
         });
 
         User user = User.create(email, passwordEncoder.encode(request.password()), request.firstName(),
                 request.lastName());
         User savedUser = userRepository.register(user);
+        logger.info("User registered successfully: " + savedUser.getEmail());
         return userMapper.toResponse(savedUser);
     }
 
@@ -57,6 +61,7 @@ public class AuthenticationService implements AuthenticationUseCase {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
         UserDetails authUser = (UserDetails) authentication.getPrincipal();
+        logger.info("User logged in successfully: " + authUser.getUsername());
         return new LoginResponse(jwtTokenProvider.generateToken(authUser));
     }
 }

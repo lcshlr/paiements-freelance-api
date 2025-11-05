@@ -38,4 +38,18 @@ public record Money(BigDecimal amount) {
         }
         return this.amount.compareTo(other.amount);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Money other))
+            return false;
+        return this.amount.compareTo(other.amount) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.amount.stripTrailingZeros().hashCode();
+    }
 }

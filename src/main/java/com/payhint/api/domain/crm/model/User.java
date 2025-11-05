@@ -66,6 +66,7 @@ public class User {
     public void changePassword(String password) {
         ensurePasswordIsValid(password);
         this.password = password;
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void ensureNotBlankIfProvided(String fieldName, String value) {

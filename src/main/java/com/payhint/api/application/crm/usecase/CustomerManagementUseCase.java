@@ -8,16 +8,14 @@ import com.payhint.api.application.crm.dto.response.CustomerResponse;
 import com.payhint.api.domain.crm.valueobject.CustomerId;
 import com.payhint.api.domain.crm.valueobject.UserId;
 
-import jakarta.validation.Valid;
-
 public interface CustomerManagementUseCase {
     CustomerResponse viewCustomerProfile(UserId userId, CustomerId customerId);
 
     List<CustomerResponse> listAllCustomers(UserId userId);
 
-    CustomerResponse createCustomer(UserId userId, @Valid CreateCustomerRequest request);
+    CustomerResponse createCustomer(UserId userId, CreateCustomerRequest request);
 
-    CustomerResponse updateCustomerDetails(UserId userId, CustomerId customerId, @Valid UpdateCustomerRequest request);
+    CustomerResponse updateCustomerDetails(UserId userId, CustomerId customerId, UpdateCustomerRequest request);
 
     void deleteCustomer(UserId userId, CustomerId customerId);
 }
