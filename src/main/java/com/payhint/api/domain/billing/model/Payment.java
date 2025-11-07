@@ -35,17 +35,18 @@ public class Payment {
         this.updatedAt = updatedAt;
     }
 
-    public static Payment create(InstallmentId installmentId, Money amount, LocalDate paymentDate) {
+    public static Payment create(@NonNull InstallmentId installmentId, @NonNull Money amount,
+            @NonNull LocalDate paymentDate) {
         return new Payment(null, installmentId, amount, paymentDate, LocalDateTime.now(), LocalDateTime.now());
     }
 
     void updateDetails(Money amount, LocalDate paymentDate) {
         boolean isUpdated = false;
-        if (amount != null) {
+        if (amount != null && !amount.equals(this.amount)) {
             this.amount = amount;
             isUpdated = true;
         }
-        if (paymentDate != null) {
+        if (paymentDate != null && !paymentDate.equals(this.paymentDate)) {
             this.paymentDate = paymentDate;
             isUpdated = true;
         }

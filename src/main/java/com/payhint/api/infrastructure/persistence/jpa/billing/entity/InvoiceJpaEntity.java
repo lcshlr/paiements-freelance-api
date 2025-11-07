@@ -45,6 +45,9 @@ public class InvoiceJpaEntity {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "is_archived", nullable = false)
+    private boolean isArchived;
+
     @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<InstallmentJpaEntity> installments = new ArrayList<>();

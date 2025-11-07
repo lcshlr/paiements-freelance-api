@@ -15,7 +15,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "installments")
+@Table(name = "installments", uniqueConstraints = @UniqueConstraint(columnNames = { "invoice_id", "due_date" }))
 @Data
 @Builder
 @NoArgsConstructor

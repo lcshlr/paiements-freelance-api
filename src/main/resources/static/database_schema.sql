@@ -69,6 +69,7 @@ CREATE TABLE invoices (
     invoice_reference VARCHAR(255) NOT NULL,
     total_amount NUMERIC(12, 2) NOT NULL CHECK (total_amount >= 0),
     currency VARCHAR(10) NOT NULL,
+    is_archived BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT uq_customer_invoice_reference UNIQUE (customer_id, invoice_reference)
@@ -80,7 +81,8 @@ CREATE TABLE installments (
     amount_due NUMERIC(12, 2) NOT NULL CHECK (amount_due >= 0),
     amount_paid NUMERIC(12, 2) NOT NULL DEFAULT 0.00 CHECK (amount_paid >= 0),
     due_date DATE NOT NULL,
-    status installment_status_enum NOT NULL DEFAULT 'PENDING'
+    status installment_status_enum NOT NULL DEFAULT 'PENDING',
+    CONSTRAINT uq_invoice_due_date UNIQUE (invoice_id, due_date)
 );
 
 CREATE TABLE payments (
@@ -103,6 +105,7 @@ CREATE TABLE notification_logs (
 
 
 CREATE INDEX idx_invoices_on_customer_id ON invoices(customer_id);
+-- Unique constraint creates an index on (invoice_id, due_date) automatically
 CREATE INDEX idx_installments_on_invoice_id ON installments(invoice_id);
 CREATE INDEX idx_installments_on_status_and_due_date ON installments(status, due_date);
 CREATE INDEX idx_payments_on_installment_id ON payments(installment_id);

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import com.payhint.api.domain.billing.exception.InvalidMoneyValueException;
 import com.payhint.api.domain.billing.exception.PaymentDoesNotBelongToInstallmentException;
@@ -50,7 +51,8 @@ public class Installment {
         this.updatedAt = updatedAt;
     }
 
-    public static Installment create(InvoiceId invoiceId, Money amountDue, LocalDate dueDate) {
+    public static Installment create(@NonNull InvoiceId invoiceId, @NonNull Money amountDue,
+            @NonNull LocalDate dueDate) {
         return new Installment(null, invoiceId, amountDue, Money.ZERO, dueDate, PaymentStatus.PENDING,
                 new ArrayList<>(), LocalDateTime.now(), LocalDateTime.now());
     }
@@ -67,18 +69,30 @@ public class Installment {
         return amountDue.subtract(amountPaid);
     }
 
-    public void updateDetails(Money amountDue, LocalDate dueDate) {
+    public List<Payment> getPayments() {
+        return List.copyOf(payments);
+    }
+
+    void updateDetails(Money amountDue, LocalDate dueDate) {
         boolean updated = false;
-        if (amountDue != null) {
+        if (amountDue != null && !amountDue.equals(this.amountDue)) {
+            ensureAmountLessThanAmountPaid(amountDue);
             this.amountDue = amountDue;
             updated = true;
         }
-        if (dueDate != null) {
+        if (dueDate != null && !dueDate.equals(this.dueDate)) {
             this.dueDate = dueDate;
             updated = true;
         }
         if (updated) {
             this.updatedAt = LocalDateTime.now();
+        }
+    }
+
+    private void ensureAmountLessThanAmountPaid(Money newAmountDue) {
+        if (newAmountDue.compareTo(this.amountPaid) < 0) {
+            throw new InvalidMoneyValueException(
+                    "Installment amountDue cannot be less than amountPaid: " + this.amountPaid);
         }
     }
 
@@ -108,13 +122,18 @@ public class Installment {
         }
     }
 
-    public LocalDateTime getLastPaymentDate() {
-        return payments.stream().map(Payment::getUpdatedAt).max(LocalDateTime::compareTo).orElse(null);
+    public Optional<LocalDateTime> getLastPaymentDate() {
+        return payments.stream().map(Payment::getUpdatedAt).max(LocalDateTime::compareTo);
     }
 
     void addPayment(@NonNull Payment payment) {
         if (payment.getInstallmentId() == null || !payment.getInstallmentId().equals(this.id)) {
             throw new PaymentDoesNotBelongToInstallmentException(payment.getInstallmentId());
+        }
+
+        if (this.payments.stream().anyMatch(pmt -> pmt.getId().equals(payment.getId()))) {
+            throw new IllegalArgumentException(
+                    "Payment with id " + payment.getId() + " already exists in the installment.");
         }
 
         if (payment.getAmount().compareTo(getRemainingAmount()) > 0) {
@@ -125,23 +144,23 @@ public class Installment {
         updatePaymentStatus();
     }
 
-    void updatePayment(@NonNull Payment newPayment) {
-        if (newPayment.getId() == null) {
+    void updatePayment(@NonNull Payment updatedPayment) {
+        if (updatedPayment.getId() == null) {
             throw new IllegalArgumentException("Payment ID cannot be null when updating a payment");
         }
-        Payment existingPayment = this.payments.stream().filter(p -> p.getId().equals(newPayment.getId())).findFirst()
-                .orElse(null);
+        Payment existingPayment = this.payments.stream().filter(p -> p.getId().equals(updatedPayment.getId()))
+                .findFirst().orElse(null);
 
         if (existingPayment == null) {
             throw new IllegalArgumentException("Payment to update not found in installment");
         }
 
-        validatePaymentUpdate(existingPayment.getAmount(), newPayment.getAmount());
+        validatePaymentUpdate(existingPayment.getAmount(), updatedPayment.getAmount());
 
         Money existingAmount = existingPayment.getAmount();
-        Money newAmount = newPayment.getAmount();
+        Money newAmount = updatedPayment.getAmount();
 
-        existingPayment.updateDetails(newAmount, newPayment.getPaymentDate());
+        existingPayment.updateDetails(newAmount, updatedPayment.getPaymentDate());
 
         this.amountPaid = this.amountPaid.subtract(existingAmount).add(newAmount);
         updatePaymentStatus();
